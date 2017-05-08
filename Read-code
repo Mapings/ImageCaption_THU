@@ -1,0 +1,20 @@
+## instruction
+读image to text的tensorflow代码
+source：https://github.com/tensorflow/models/blob/master/im2txt/
+
+## train.py
+17-25：导入各种需要使用的函数
+27-39：定义train的变量
+41: ?
+44-：定义主函数
+  45-46：assert，严格执行？
+  48-51：模型框架，依赖于 configuration.py和输入
+  54-57：创建训练目录
+  60-65：建立模型，依赖于show_and_tell_model.py
+  68-87: 学习率和learning rate decay的设置
+  90-96：设置训练的一些具体参数
+  99：存储训练模型的checkpoint？
+  102-110：训练模型
+113-114：运行
+
+## 
