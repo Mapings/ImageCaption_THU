@@ -122,7 +122,7 @@ class ShowAndTellModel(object):
     """Input prefetching, preprocessing and batching.
 
     Outputs:
-      self.images
+      self.image_embeddings
       self.input_seqs
       self.target_seqs (training and eval only)
       self.input_mask (training and eval only)
