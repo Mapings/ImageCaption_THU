@@ -224,7 +224,7 @@ class ShowAndTellModel(object):
           name="map",
           shape=[self.config.vocab_size, self.config.embedding_size],
           initializer=self.initializer)
-      seq_embeddings = tf.nn.embedding_lookup(embedding_, self.input_seqs)
+      seq_embeddings = tf.nn.embedding_lookup(embedding_map, self.input_seqs)
 
     self.seq_embeddings = seq_embeddings
 
