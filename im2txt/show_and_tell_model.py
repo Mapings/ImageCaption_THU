@@ -276,19 +276,6 @@ class ShowAndTellModel(object):
       self.target_cross_entropy_losses = losses  # Used in evaluation.
       self.target_cross_entropy_loss_weights = weights  # Used in evaluation.
 
-  def setup_inception_initializer(self):
-    """Sets up the function to restore inception variables from checkpoint."""
-    if self.mode != "inference":
-      # Restore inception variables only.
-      saver = tf.train.Saver(self.inception_variables)
-
-      def restore_fn(sess):
-        tf.logging.info("Restoring Inception variables from checkpoint file %s",
-                        self.config.inception_checkpoint_file)
-        saver.restore(sess, self.config.inception_checkpoint_file)
-
-      self.init_fn = restore_fn
-
   def setup_global_step(self):
     """Sets up the global step Tensor."""
     global_step = tf.Variable(
