@@ -194,7 +194,8 @@ class ShowAndTellModel(object):
     self.inception_variables = tf.get_collection(
         tf.GraphKeys.GLOBAL_VARIABLES, scope="InceptionV3")
 
-    # Map inception output into embedding space.
+    # Map
+    inception output into embedding space.
     with tf.variable_scope("image_embedding") as scope:
       image_embeddings = tf.contrib.layers.fully_connected(
           inputs=inception_output,
@@ -223,7 +224,7 @@ class ShowAndTellModel(object):
           name="map",
           shape=[self.config.vocab_size, self.config.embedding_size],
           initializer=self.initializer)
-      seq_embeddings = tf.nn.embedding_lookup(embedding_map, self.input_seqs)
+      seq_embeddings = tf.nn.embedding_lookup(embedding_, self.input_seqs)
 
     self.seq_embeddings = seq_embeddings
 
@@ -350,7 +351,7 @@ class ShowAndTellModel(object):
 
   def build(self):
     """Creates all ops for training and evaluation."""
-    self.build_inputs()
+    # self.build_inputs()
     # self.build_image_embeddings()
     self.build_seq_embeddings()
     self.build_model()
