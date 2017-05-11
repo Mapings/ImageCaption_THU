@@ -100,24 +100,6 @@ class ShowAndTellModel(object):
     """Returns true if the model is built for training mode."""
     return self.mode == "train"
 
-  def process_image(self, encoded_image, thread_id=0):
-    """Decodes and processes an image string.
-
-    Args:
-      encoded_image: A scalar string Tensor; the encoded image.
-      thread_id: Preprocessing thread id used to select the ordering of color
-        distortions.
-
-    Returns:
-      A float32 Tensor of shape [height, width, 3]; the processed image.
-    """
-    return image_processing.process_image(encoded_image,
-                                          is_training=self.is_training(),
-                                          height=self.config.image_height,
-                                          width=self.config.image_width,
-                                          thread_id=thread_id,
-                                          image_format=self.config.image_format)
-
   def build_inputs(self):
     """Input prefetching, preprocessing and batching.
 
@@ -177,37 +159,6 @@ class ShowAndTellModel(object):
     self.input_seqs = input_seqs
     self.target_seqs = target_seqs
     self.input_mask = input_mask
-
-  def build_image_embeddings(self):
-    """Builds the image model subgraph and generates image embeddings.
-
-    Inputs:
-      self.images
-
-    Outputs:
-      self.image_embeddings
-    """
-    inception_output = image_embedding.inception_v3(
-        self.images,
-        trainable=self.train_inception,
-        is_training=self.is_training())
-    self.inception_variables = tf.get_collection(
-        tf.GraphKeys.GLOBAL_VARIABLES, scope="InceptionV3")
-
-    # Map inception output into embedding space.
-    with tf.variable_scope("image_embedding") as scope:
-      image_embeddings = tf.contrib.layers.fully_connected(
-          inputs=inception_output,
-          num_outputs=self.config.embedding_size,
-          activation_fn=None,
-          weights_initializer=self.initializer,
-          biases_initializer=None,
-          scope=scope)
-
-    # Save the embedding size in the graph.
-    tf.constant(self.config.embedding_size, name="embedding_size")
-
-    self.image_embeddings = image_embeddings
 
   def build_seq_embeddings(self):
     """Builds the input sequence embeddings.
@@ -354,5 +305,5 @@ class ShowAndTellModel(object):
     # self.build_image_embeddings()
     self.build_seq_embeddings()
     self.build_model()
-    self.setup_inception_initializer()
+    # self.setup_inception_initializer()
     self.setup_global_step()
