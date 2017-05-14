@@ -38,7 +38,7 @@ class ShowAndTellModel(object):
   Oriol Vinyals, Alexander Toshev, Samy Bengio, Dumitru Erhan
   """
 
-  def __init__(self, config, mode, train_inception=False):
+  def __init__(self, config, mode, image_embeddings, seq_embeddings, target_seqs, input_mask):
     """Basic setup.
 
     Args:
@@ -49,7 +49,7 @@ class ShowAndTellModel(object):
     assert mode in ["train", "eval", "inference"]
     self.config = config
     self.mode = mode
-    self.train_inception = train_inception
+    self.train_inception = None
 
     # Reader for the input data.
     self.reader = tf.TFRecordReader()
@@ -64,16 +64,16 @@ class ShowAndTellModel(object):
     # self.images = None
 
     # An int32 Tensor with shape [batch_size, padded_length].
-    self.input_seqs = None
+    self.input_seqs = seq_embeddings
 
     # An int32 Tensor with shape [batch_size, padded_length].
-    self.target_seqs = None
+    self.target_seqs = target_seqs
 
     # An int32 0/1 Tensor with shape [batch_size, padded_length].
-    self.input_mask = None
+    self.input_mask = input_mask
 
     # A float32 Tensor with shape [batch_size, embedding_size].
-    self.image_embeddings = None
+    self.image_embeddings = image_embeddings
 
     # A float32 Tensor with shape [batch_size, padded_length, embedding_size].
     self.seq_embeddings = None
@@ -350,9 +350,9 @@ class ShowAndTellModel(object):
 
   def build(self):
     """Creates all ops for training and evaluation."""
-    self.build_inputs()
+    #self.build_inputs()
     # self.build_image_embeddings()
     self.build_seq_embeddings()
     self.build_model()
-    self.setup_inception_initializer()
+    # self.setup_inception_initializer()
     self.setup_global_step()
