@@ -11,5 +11,7 @@ train_new.txt: results of alphabet_hanzi.py
 
 待完成：
   @窦珊 在 ./im2txt/input_data.py下完善代码
+  
   @汪洁 在 ./im2txt/input_data.py下完善代码
+  
   @all，写一个infer脚本，测试程序的正确性
