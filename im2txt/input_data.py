@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 import numpy as np
+import h5py
 
 """Input Data Here
   Outputs:
@@ -26,10 +27,18 @@ class read_data_sets(object):
     self.read_seqs(self.train_dir)
 
   def read_image_embeddings(self, train_dir):
-    #TODO
-    #删掉下面两句话，并且换成你自己的代码
-    self.image_embeddings = np.random.rand(700, 512)
-    self.image_embeddings = self.image_embeddings.astype(np.float32)
+ 
+	#将训练数据作为不变变量读入
+	f=h5py.File('fc1_new.h5','r')
+	training_data =np.array(f['train_set'],dtype=np.int32)
+	training_data =training_data.transpose()
+
+	with tf.Session() as sess:
+		data_initializer = tf.placeholder(dtype=training_data.dtype,shape=training_data.shape)
+		self.image_embeddings = tf.Variable(data_initializer, trainable=False, collections=[])
+		sess.run(self.image_embeddings.initializer,feed_dict={data_initializer: training_data})
+	f.close()
+    
 
   def read_seqs(self, train_dir):
     #TODO
