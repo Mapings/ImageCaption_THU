@@ -40,7 +40,42 @@ def _create_vocab(captions):
   # Create the vocabulary dictionary.
   reverse_vocab = [x[0] for x in word_counts]
   unk_id = len(reverse_vocab)
-  vocab_dict = dict([(x, y) for (y, x) in enumerate(reverse_vocab)])
+  vocab_dict = dict([(x, y+1) for (y, x) in enumerate(reverse_vocab)])
   # vocab = Vocabulary(vocab_dict, unk_id)
 
   return vocab_dict, unk_id
+
+def caption_to_input(seqLen, captionid):
+  """Create input_seq, target_seq and mask; target_seq is the 
+    input sequence right-shifted by 1. Input and target sequences 
+    are padded up to the maximum length of sequences. A mask is 
+    created to distinguish real words from padding words of the 
+    input_seq.
+    Suggestions from TA:
+    1. padding words: 0; the vocabulary starts from 1;
+    2. the length of sequence = proper;
+    3. add special start and stop to the captionid, then transfer 
+    into input sequence;
+  """
+  input_seq = []
+  target_seq = []
+  mask = []
+  l = seqLen;
+  for c in captionid:
+    if len(c)>=l:
+      input_seq.append(c[0:l-1])
+      target_seq.append(c[1:l])
+      mask.append((l-1)*[1])
+    else:
+      i = c[0:len(c)-1]
+      t = c[1:len(c)]
+      a = (len(c)-1)*[1]
+      for d in range(len(c),l):
+        i.append(0)
+        t.append(0)
+        a.append(0)
+      input_seq.append(i);
+      target_seq.append(t);
+      mask.append(a)
+
+  return input_seq, target_seq, mask
