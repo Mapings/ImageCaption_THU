@@ -41,8 +41,18 @@ class read_data_sets(object):
     
 
   def read_seqs(self, train_dir):
-    #TODO
-    #删掉下面三句话，并且换成你自己的代码
+    
+    #seq_embeddings 是什么意思？ 
     self.seq_embeddings = np.random.randint(11, size=(700, 50), dtype=np.int32)
-    self.target_seqs = np.random.randint(11, size=(700, 50), dtype=np.int32)
-    self.input_mask = np.ones((700, 50), dtype=np.int32)
+
+    #读入已经处理好的input_seq, target_seq以及mask 
+    f_input = open('input_seq.txt','r')
+    self.input_seqs = np.array(f_input,dtype=np.int32)
+    f_target = open('target_seq.txt','r')
+    self.target_seqs = np.array(f_target,dtype=np.int32)
+    f_mask = open('mask.txt','r')
+    self.mask = np.array(f_mask,dtype=np.int32)
+	
+    f_input.close()
+    f_target.close()
+    f_mask.close()
