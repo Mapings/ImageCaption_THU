@@ -2,6 +2,7 @@
 
 from vocabfunction import word_to_id
 from vocabfunction import _create_vocab
+from vocabfunction import caption_to_input
 
 import json
 
@@ -37,25 +38,34 @@ thefile = open('train_caption_word.txt', 'w')
 for item in caption_word:
 	thefile.write("%s\n" % item)
 
-#打印出一堆数字，啥意思
 
 #change captions to id
 # caption_id = list()
 id = list()
+seqLen = 12;
 for line in caption_word:
 	# s = list()
-	s = [5000]
-	for word in line:
+	# each caption with a specific start and stop (not in the vocabulary)
+	start = [unk_id + 10];
+	stop = [unk_id + 11];
+	for word in line[:seqLen]:
 		caption_id = word_to_id(vocab, unk_id, word)
-		s.append(caption_id)
-	s.append(5000)
-	id.append(s)
+		start.append(caption_id)
+	start.append(stop)
+	id.append(start)
 
 thefile = open('train_caption_id.txt', 'w')
 for item in id:
 	thefile.write("%s\n" % item)
 
-
-
-
-
+seqlength = seqLen+2;
+input_seq, target_seq, mask = caption_to_input(seqlength, id)
+thefile = open('input_seq.txt', 'w')
+for item in input_seq:
+	thefile.write("%s\n" % item)
+thefile = open('target_seq.txt', 'w')
+for item in target_seq:
+	thefile.write("%s\n" % item)
+thefile = open('mask.txt', 'w')
+for item in mask:
+	thefile.write("%s\n" % item)
