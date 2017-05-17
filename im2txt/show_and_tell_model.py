@@ -38,7 +38,7 @@ class ShowAndTellModel(object):
   Oriol Vinyals, Alexander Toshev, Samy Bengio, Dumitru Erhan
   """
 
-  def __init__(self, config, mode, image_embeddings, seq_embeddings, target_seqs, input_mask):
+  def __init__(self, config, mode, image_embeddings, input_seqs, target_seqs, input_mask):
     """Basic setup.
 
     Args:
@@ -64,7 +64,7 @@ class ShowAndTellModel(object):
     # self.images = None
 
     # An int32 Tensor with shape [batch_size, padded_length].
-    self.input_seqs = seq_embeddings
+    self.input_seqs = input_seqs
 
     # An int32 Tensor with shape [batch_size, padded_length].
     self.target_seqs = target_seqs

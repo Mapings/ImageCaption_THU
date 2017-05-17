@@ -65,7 +65,8 @@ def main(unused_argv):
   # data_sets = input_data.read_data_sets(FLAGS.train_dir)
 
   # for 测试
-  data_sets = input_data.read_data_sets(FLAGS.train_dir)
+  #data_sets = input_data.read_data_sets(FLAGS.data_dir)
+  data_sets = input_data.read_data_sets("data")
 
   # Build the TensorFlow graph.
   g = tf.Graph()
@@ -75,9 +76,9 @@ def main(unused_argv):
       image_embeddings_initializer = tf.placeholder(
           dtype=data_sets.image_embeddings.dtype,
           shape=data_sets.image_embeddings.shape)
-      seq_embeddings_initializer = tf.placeholder(
-          dtype=data_sets.seq_embeddings.dtype,
-          shape=data_sets.seq_embeddings.shape)
+      input_seqs_initializer = tf.placeholder(
+          dtype=data_sets.input_seqs.dtype,
+          shape=data_sets.input_seqs.shape)
       target_seqs_initializer = tf.placeholder(
           dtype=data_sets.target_seqs.dtype,
           shape=data_sets.target_seqs.shape)
@@ -87,25 +88,25 @@ def main(unused_argv):
 
       input_image_embeddings = tf.Variable(
           image_embeddings_initializer, trainable=False, collections=[])
-      input_seq_embeddings = tf.Variable(
-          seq_embeddings_initializer, trainable=False, collections=[])
+      input_input_seqs = tf.Variable(
+          input_seqs_initializer, trainable=False, collections=[])
       input_target_seqs = tf.Variable(
           target_seqs_initializer, trainable=False, collections=[])
       input_input_mask = tf.Variable(
           input_mask_initializer, trainable=False, collections=[])
 
-      image_embeddings_slice, seq_embeddings_slice, target_seqs_slice, input_mask_slice = tf.train.slice_input_producer(
-          [input_image_embeddings, input_seq_embeddings, input_target_seqs, input_input_mask], num_epochs=FLAGS.num_epochs)
-      image_embeddings, seq_embeddings, target_seqs, input_mask = tf.train.batch(
-          [image_embeddings_slice, seq_embeddings_slice, target_seqs_slice, input_mask_slice], batch_size=model_config.batch_size)
+      image_embeddings_slice, input_seqs_slice, target_seqs_slice, input_mask_slice = tf.train.slice_input_producer(
+          [input_image_embeddings, input_input_seqs, input_target_seqs, input_input_mask], num_epochs=FLAGS.num_epochs)
+      image_embeddings, input_seqs, target_seqs, input_mask = tf.train.batch(
+          [image_embeddings_slice, input_seqs_slice, target_seqs_slice, input_mask_slice], batch_size=model_config.batch_size)
     print(image_embeddings)
-    print(seq_embeddings)
+    print(input_seqs)
     print(target_seqs)
     print(input_mask)
 
     # Build the model.
     model = show_and_tell_model.ShowAndTellModel(
-        model_config, mode="train", image_embeddings=image_embeddings, seq_embeddings=seq_embeddings, target_seqs=target_seqs, input_mask=input_mask)
+        model_config, mode="train", image_embeddings=image_embeddings, input_seqs=input_seqs, target_seqs=target_seqs, input_mask=input_mask)
     model.build()
 
     # Set up the learning rate.
@@ -158,8 +159,8 @@ def main(unused_argv):
     #print(feed_dict)
     sess.run(input_image_embeddings.initializer,
            feed_dict={image_embeddings_initializer: data_sets.image_embeddings})
-    sess.run(input_seq_embeddings.initializer,
-           feed_dict={seq_embeddings_initializer: data_sets.seq_embeddings})
+    sess.run(input_input_seqs.initializer,
+           feed_dict={input_seqs_initializer: data_sets.input_seqs})
     sess.run(input_target_seqs.initializer,
            feed_dict={target_seqs_initializer: data_sets.target_seqs})
     sess.run(input_input_mask.initializer,
@@ -176,7 +177,7 @@ def main(unused_argv):
       while not coord.should_stop():
         start_time = time.time()
         # Run one step of the model.
-        _, loss_value = sess.run([train_op, model.total_loss])
+        _, loss_value = sess.run([train_op, model.total_loss, model.])
         duration = time.time() - start_time
 
         # Write the summaries and print an overview fairly often.

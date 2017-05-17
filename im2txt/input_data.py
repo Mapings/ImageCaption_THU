@@ -23,35 +23,44 @@ class read_data_sets(object):
   def __init__(self, train_dir):
 
     self.train_dir = train_dir
+    self.image_embeddings = None
+    self.input_seqs = None
+    self.target_seqs = None
+    self.input_mask = None
     self.read_image_embeddings(self.train_dir)
     self.read_seqs(self.train_dir)
 
-  def read_image_embeddings(self, train_dir):
+  def read_image_embeddings(self, data_dir):
  
-	#将训练数据作为不变变量读入
-	f=h5py.File('fc1_new.h5','r')
-	training_data =np.array(f['train_set'],dtype=np.int32)
-	training_data =training_data.transpose()
+    # 将训练数据作为不变变量读入
+    f = h5py.File(data_dir+'/fc1_new.h5','r')
+    training_data = np.array(f['train_set'],dtype=np.float32)
+    training_data = training_data.transpose()
+    self.image_embeddings = training_data
+    f.close()
 
-	with tf.Session() as sess:
-		data_initializer = tf.placeholder(dtype=training_data.dtype,shape=training_data.shape)
-		self.image_embeddings = tf.Variable(data_initializer, trainable=False, collections=[])
-		sess.run(self.image_embeddings.initializer,feed_dict={data_initializer: training_data})
-	f.close()
-    
+  def read_seqs(self, data_dir):
 
-  def read_seqs(self, train_dir):
-    
-    #seq_embeddings 是什么意思？ 
-    self.seq_embeddings = np.random.randint(11, size=(700, 50), dtype=np.int32)
+    #self.seq_embeddings = np.random.randint(11, size=(700, 50), dtype=np.int32)
 
-    #读入已经处理好的input_seq, target_seq以及mask 
-    f_input = open('input_seq.txt','r')
-    self.input_seqs = np.array(f_input,dtype=np.int32)
-    f_target = open('target_seq.txt','r')
-    self.target_seqs = np.array(f_target,dtype=np.int32)
-    f_mask = open('mask.txt','r')
-    self.mask = np.array(f_mask,dtype=np.int32)
+    # 读入已经处理好的input_seq, target_seq以及mask
+    f_input = open(data_dir + '/input_seq.txt','r')
+    input_seqs = []
+    for line in f_input:
+        input_seqs.append(eval(line))
+    self.input_seqs = np.array(input_seqs, dtype=np.int32)
+
+    f_target = open(data_dir + '/target_seq.txt','r')
+    target_seqs = []
+    for line in f_target:
+        target_seqs.append(eval(line))
+    self.target_seqs = np.array(target_seqs, dtype=np.int32)
+
+    f_mask = open(data_dir + '/mask.txt','r')
+    input_mask = []
+    for line in f_mask:
+        input_mask.append(eval(line))
+    self.input_mask = np.array(input_mask, dtype=np.int32)
 	
     f_input.close()
     f_target.close()
