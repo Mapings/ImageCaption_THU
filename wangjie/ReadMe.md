@@ -9,10 +9,16 @@ train.txt
 
 生成的文件：
 
-主要：input_seq, target_seq, mask, train_vocab.txt(min_word_count = 4), 字典。
+主要：
 
-过程中生成的文件：word_count_all.txt(设置min_word_count = 1，得到train caption中所有字的词频统计结果）；
+input_seq； target_seq； mask； train_vocab.txt(min_word_count = 4), 字典（记得重新上传更新之后的，1所谓字典起始的id；0已经作为padding word了）。
+
+过程中生成的文件：
+
+word_count_all.txt(设置min_word_count = 1，得到train caption中所有字的词频统计结果）；
+
 train_captions.txt,原始标注数据去除图片数字标号的中文描述；
+
 train_caption_word是将train_captions分割成一个一个字，用于最后生成train_caption_id.txt。
 
 
