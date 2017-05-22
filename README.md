@@ -27,19 +27,19 @@ train的方法：
     
     2.在./im2txt/configuration.py下设置必要的参数，对我们来说，主要的参数有：
     
-        (1) self.vocab_size = 2000
+									(1) self.vocab_size = 2000
     
-        (2) self.batch_size = 32  
+									(2) self.batch_size = 32  
     
-        (3) self.embedding_size = 4096
+									(3) self.embedding_size = 4096
     
-        (4) self.num_lstm_units = 512
+									(4) self.num_lstm_units = 512
     
-        (5) self.initial_learning_rate = 2.0
+									(5) self.initial_learning_rate = 2.0
     
-        (6) self.learning_rate_decay_factor = 0.5
+									(6) self.learning_rate_decay_factor = 0.5
     
-        (7) self.max_checkpoints_to_keep = 5
+									(7) self.max_checkpoints_to_keep = 5
     
     3. 将target_seq.txt, input_seq.txt, mask.txt放在./im2txt/data文件夹下
     
@@ -74,6 +74,5 @@ infer的方法：
                        "model checkpoint file.")
                        
     4. 将word_count_all.txt放在./im2txt/data目录下,关于word_count_all.txt，ask@汪洁
-    
-    5. 运行./im2txt/run_inference.py
     
+    5. 运行./im2txt/run_inference.py
