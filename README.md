@@ -66,8 +66,11 @@ infer的方法：
        即选择测试的文件是train_set还是validation_set
        
     3. 在./run_inference中设置checkpoint文件
+    
     		tf.flags.DEFINE_string("checkpoint_path", "my_model2/model.ckpt-399999",       #set your checkpoint to load here
+		
 			"Model checkpoint file or directory containing a "
+			
 			 "model checkpoint file.")
                        
     4. 将word_count_all.txt放在./im2txt/data目录下,关于word_count_all.txt，ask@汪洁
