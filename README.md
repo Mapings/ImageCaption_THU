@@ -50,6 +50,7 @@ train_new.txt: results of alphabet_hanzi.py
        
        你将在./im2txt/my_model下发现一些checkpoint文件
        
+
 ##infer的方法：##
 
     1. 关闭train的过程（目前train和infer不能同时运行，如果发现问题解决方法，一定微信告诉@马平烁）
