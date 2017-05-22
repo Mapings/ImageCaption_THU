@@ -50,7 +50,7 @@ class ModelConfig(object):
     # for differences between tokenizer versions used in preprocessing. There is
     # no harm in using a value greater than the actual vocab size, but using a
     # value less than the actual vocab size will result in an error.
-    self.vocab_size = 12000
+    self.vocab_size = 2000
 
     # Number of threads for image preprocessing. Should be a multiple of 2.
     self.num_preprocess_threads = 4
@@ -71,7 +71,7 @@ class ModelConfig(object):
     self.initializer_scale = 0.08
 
     # LSTM input and output dimensionality, respectively.
-    self.embedding_size = 512
+    self.embedding_size = 4096
     self.num_lstm_units = 512
 
     # If < 1.0, the dropout keep probability applied to LSTM variables.

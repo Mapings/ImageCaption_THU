@@ -27,8 +27,8 @@ class Vocabulary(object):
 
   def __init__(self,
                vocab_file,
-               start_word="<S>",
-               end_word="</S>",
+               start_id=1796,
+               end_id=1797,
                unk_word="<UNK>"):
     """Initializes the vocabulary.
 
@@ -47,10 +47,10 @@ class Vocabulary(object):
     with tf.gfile.GFile(vocab_file, mode="r") as f:
       reverse_vocab = list(f.readlines())
     reverse_vocab = [line.split()[0] for line in reverse_vocab]
-    assert start_word in reverse_vocab
-    assert end_word in reverse_vocab
-    if unk_word not in reverse_vocab:
-      reverse_vocab.append(unk_word)
+    # assert start_word in reverse_vocab
+    # assert end_word in reverse_vocab
+    # if unk_word not in reverse_vocab:
+    #   reverse_vocab.append(unk_word)
     vocab = dict([(x, y) for (y, x) in enumerate(reverse_vocab)])
 
     tf.logging.info("Created vocabulary with %d words" % len(vocab))
@@ -59,9 +59,11 @@ class Vocabulary(object):
     self.reverse_vocab = reverse_vocab  # reverse_vocab[id] = word
 
     # Save special word ids.
-    self.start_id = vocab[start_word]
-    self.end_id = vocab[end_word]
-    self.unk_id = vocab[unk_word]
+    # self.start_id = vocab[start_word]
+    # self.end_id = vocab[end_word]
+    self.start_id = start_id
+    self.end_id = end_id
+    # self.unk_id = vocab[unk_word]   #暂时删掉unk_id @汪洁
 
   def word_to_id(self, word):
     """Returns the integer word id of a word string."""

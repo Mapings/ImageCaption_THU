@@ -114,8 +114,9 @@ class InferenceWrapperBase(object):
     tf.logging.info("Building model.")
     self.build_model(model_config)
     saver = tf.train.Saver()
-
+    #saver = tf.train.import_meta_graph(checkpoint_path + '.meta')
     return self._create_restore_fn(checkpoint_path, saver)
+    #return self._create_restore_fn("my_model/", saver)
 
   def build_graph_from_proto(self, graph_def_file, saver_def_file,
                              checkpoint_path):
@@ -147,7 +148,7 @@ class InferenceWrapperBase(object):
 
     return self._create_restore_fn(checkpoint_path, saver)
 
-  def feed_image(self, sess, encoded_image):
+  def feed_image(self, sess, image_embedding):
     """Feeds an image and returns the initial model state.
 
     See comments at the top of file.

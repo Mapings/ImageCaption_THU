@@ -21,6 +21,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 import sys
+import os
 sys.path.append("../")
 from im2txt import configuration
 from im2txt import show_and_tell_model
@@ -33,14 +34,14 @@ tf.flags.DEFINE_string("input_file_pattern", "",
                        "File pattern of sharded TFRecord input files.")
 tf.flags.DEFINE_string("inception_checkpoint_file", "",
                        "Path to a pretrained inception_v3 model.")
-tf.flags.DEFINE_string("train_dir", "./test_mps_train_dir",
+tf.flags.DEFINE_string("train_dir", "/test_mps_train_dir",
                        "Directory for saving and loading model checkpoints.")
 tf.flags.DEFINE_boolean("train_inception", False,
                         "Whether to train inception submodel variables.")
 tf.flags.DEFINE_integer("number_of_steps", 1000000, "Number of training steps.")
 tf.flags.DEFINE_integer("log_every_n_steps", 1,
                         "Frequency at which loss and global step are logged.")
-tf.flags.DEFINE_integer("num_epochs", 20,
+tf.flags.DEFINE_integer("num_epochs", 20000000000000,
                         ".")
 
 tf.logging.set_verbosity(tf.logging.INFO)
@@ -177,7 +178,7 @@ def main(unused_argv):
       while not coord.should_stop():
         start_time = time.time()
         # Run one step of the model.
-        _, loss_value = sess.run([train_op, model.total_loss, model.])
+        _, loss_value = sess.run([train_op, model.total_loss])
         duration = time.time() - start_time
 
         # Write the summaries and print an overview fairly often.
@@ -191,14 +192,14 @@ def main(unused_argv):
           step += 1
 
       # Save a checkpoint periodically.
-        if (step + 1) % 1000 == 0:
+        if (step + 1) % 10000 == 0:
           print('Saving')
-          saver.save(sess, FLAGS.train_dir, global_step=step)
+          saver.save(sess, os.path.join(os.getcwd(), 'my_model/model.ckpt'), global_step=step)
 
           step += 1
     except tf.errors.OutOfRangeError:
       print('Saving')
-      saver.save(sess, FLAGS.train_dir, global_step=step)
+      saver.save(sess, os.path.join(os.getcwd(), 'my_model/model.ckpt'), global_step=step)
       print('Done training for %d epochs, %d steps.' % (FLAGS.num_epochs, step))
     finally:
     # When done, ask the threads to stop.

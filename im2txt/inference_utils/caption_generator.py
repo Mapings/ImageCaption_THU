@@ -21,7 +21,7 @@ from __future__ import print_function
 import heapq
 import math
 
-
+import tensorflow as tf
 import numpy as np
 
 
@@ -138,7 +138,7 @@ class CaptionGenerator(object):
     self.max_caption_length = max_caption_length
     self.length_normalization_factor = length_normalization_factor
 
-  def beam_search(self, sess, encoded_image):
+  def beam_search(self, sess, image_embedding):
     """Runs beam search caption generation on a single image.
 
     Args:
@@ -149,7 +149,7 @@ class CaptionGenerator(object):
       A list of Caption sorted by descending score.
     """
     # Feed in the image to get the initial state.
-    initial_state = self.model.feed_image(sess, encoded_image)
+    initial_state = self.model.feed_image(sess, image_embedding)
 
     initial_beam = Caption(
         sentence=[self.vocab.start_id],
@@ -160,6 +160,7 @@ class CaptionGenerator(object):
     partial_captions = TopN(self.beam_size)
     partial_captions.push(initial_beam)
     complete_captions = TopN(self.beam_size)
+
 
     # Run beam search.
     for _ in range(self.max_caption_length - 1):

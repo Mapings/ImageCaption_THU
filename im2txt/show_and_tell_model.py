@@ -38,7 +38,7 @@ class ShowAndTellModel(object):
   Oriol Vinyals, Alexander Toshev, Samy Bengio, Dumitru Erhan
   """
 
-  def __init__(self, config, mode, image_embeddings, input_seqs, target_seqs, input_mask):
+  def __init__(self, config, mode, image_embeddings=None, input_seqs=None, target_seqs=None, input_mask=None):
     """Basic setup.
 
     Args:
@@ -129,18 +129,25 @@ class ShowAndTellModel(object):
     """
     if self.mode == "inference":
       # In inference mode, images and inputs are fed via placeholders.
-      image_feed = tf.placeholder(dtype=tf.string, shape=[], name="image_feed")
+      image_embedding_feed = tf.placeholder(dtype=tf.float32, shape=[4096], name="image_embedding_feed")
       input_feed = tf.placeholder(dtype=tf.int64,
                                   shape=[None],  # batch_size
                                   name="input_feed")
 
       # Process image and insert batch dimensions.
-      images = tf.expand_dims(self.process_image(image_feed), 0)
+      image_embeddings = tf.expand_dims(image_embedding_feed, 0)   #待修改，到底如何expend
       input_seqs = tf.expand_dims(input_feed, 1)
 
       # No target sequences or input mask in inference mode.
       target_seqs = None
       input_mask = None
+
+      self.image_embeddings = image_embeddings
+      self.input_seqs = input_seqs
+      self.target_seqs = target_seqs
+      self.input_mask = input_mask
+
+    '''
     else:
       # Prefetch serialized SequenceExample protos.
       input_queue = input_ops.prefetch_input_data(
@@ -172,11 +179,8 @@ class ShowAndTellModel(object):
           input_ops.batch_with_dynamic_pad(images_and_captions,
                                            batch_size=self.config.batch_size,
                                            queue_capacity=queue_capacity))
+    '''
 
-    self.image_embeddings = image_embeddings
-    self.input_seqs = input_seqs
-    self.target_seqs = target_seqs
-    self.input_mask = input_mask
 
   def build_image_embeddings(self):
     """Builds the image model subgraph and generates image embeddings.
@@ -350,7 +354,7 @@ class ShowAndTellModel(object):
 
   def build(self):
     """Creates all ops for training and evaluation."""
-    #self.build_inputs()
+    self.build_inputs()
     # self.build_image_embeddings()
     self.build_seq_embeddings()
     self.build_model()
