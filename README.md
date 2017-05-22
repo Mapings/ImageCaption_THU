@@ -67,7 +67,7 @@ infer的方法：
        
     3. 在./run_inference中设置checkpoint文件
     
-    		tf.flags.DEFINE_string("checkpoint_path", "my_model2/model.ckpt-399999",       #set your checkpoint to load here
+    	tf.flags.DEFINE_string("checkpoint_path", "my_model2/model.ckpt-399999",       #set your checkpoint to load here
 		
 			"Model checkpoint file or directory containing a "
 			
