@@ -44,7 +44,9 @@ train_new.txt: results of alphabet_hanzi.py
     
     3. 将target_seq.txt, input_seq.txt, mask.txt放在./im2txt/data文件夹下
     
-    4. 在 ./im2txt/train_pre_load.py中设置参数：tf.flags.DEFINE_integer("num_epochs", 20000000000000,".")，即train多少轮
+    4. 在 ./im2txt/train_pre_load.py中设置参数：
+    	
+	tf.flags.DEFINE_integer("num_epochs", 20000000000000,".")，即train多少轮
     
        运行./im2txt/train_pre_load.py
        
