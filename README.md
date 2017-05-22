@@ -22,7 +22,8 @@ train_new.txt: results of alphabet_hanzi.py
 
 #--------------------------------------20170522-----------------------------------------------#
 
-train的方法：
+##train的方法：##
+
     1.将fc1_new.h5放在./im2txt/data目录下 （如果没有这个文件，可以找窦珊拷贝）
     
     2.在./im2txt/configuration.py下设置必要的参数，对我们来说，主要的参数有：
@@ -48,8 +49,8 @@ train的方法：
        运行./im2txt/train_pre_load.py
        
        你将在./im2txt/my_model下发现一些checkpoint文件
-       
-infer的方法：
+       
+##infer的方法：##
 
     1. 关闭train的过程（目前train和infer不能同时运行，如果发现问题解决方法，一定微信告诉@马平烁）
     
