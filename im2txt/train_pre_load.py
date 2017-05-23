@@ -100,10 +100,12 @@ def main(unused_argv):
           [input_image_embeddings, input_input_seqs, input_target_seqs, input_input_mask], num_epochs=FLAGS.num_epochs)
       image_embeddings, input_seqs, target_seqs, input_mask = tf.train.batch(
           [image_embeddings_slice, input_seqs_slice, target_seqs_slice, input_mask_slice], batch_size=model_config.batch_size)
+    '''
     print(image_embeddings)
     print(input_seqs)
     print(target_seqs)
     print(input_mask)
+    '''
 
     # Build the model.
     model = show_and_tell_model.ShowAndTellModel(
@@ -131,7 +133,7 @@ def main(unused_argv):
                     staircase=True)
 
             learning_rate_decay_fn = _learning_rate_decay_fn
-    print(model.global_step)
+    #print(model.global_step)
     # Set up the training ops.
     train_op = tf.contrib.layers.optimize_loss(
         loss=model.total_loss,
@@ -207,7 +209,7 @@ def main(unused_argv):
 
       # Wait for threads to finish.
     coord.join(threads)
-    
+    sess.close()
     '''
     tf.contrib.slim.learning.train(
         train_op,
