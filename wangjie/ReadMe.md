@@ -21,4 +21,10 @@ train_captions.txt,原始标注数据去除图片数字标号的中文描述；
 
 train_caption_word是将train_captions分割成一个一个字，用于最后生成train_caption_id.txt。
 
+##################################2017-05-24################################################
+新建两个文件夹：
+1. lac_2 
+中文分词后，重新生成的caption输入文件, 使用THULAC中文分词工具，min_word_count = 2
 
+2. word_3
+将每个中文汉字和每个英文单词作为字典的元素，重新生成的caption的输入文件，min_word_count = 3
