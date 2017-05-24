@@ -80,3 +80,51 @@ train_new.txt: results of alphabet_hanzi.py
     4. 将word_count_all.txt放在./im2txt/data目录下,关于word_count_all.txt，ask@汪洁
     
     5. 运行./im2txt/run_inference.py
+    
+    #--------------------------------------20170522-----------------------------------------------#
+
+##创建了两个文件夹，包含新的训练字典：##
+
+   1. ./wangjie/lac_2, 使用中文分词软件 THULAC，min_word_count = 2
+   
+   	### training
+    
+    	· 在./im2txt/configuration.py下设置必要的参数：(1) self.vocab_size = 6000
+	
+	· 将该文件夹下的target_seq.txt, input_seq.txt, mask.txt放在./im2txt/data文件夹下
+	
+	· 其他同上
+	
+	### inference
+	
+	· 将wordlac_count_2.txt放在./im2txt/data目录下
+	
+	· run_inference.py里面做相应修改：
+	tf.flags.DEFINE_string("vocab_file", "data/wordlac_count_2.txt", "Text file containing the vocabulary.")
+	
+	· 可以使用我新上传的 vocabulary.py, 添加到./im2txt/inference_utils下
+	
+	` 其他同上（包括run_inference.py 里面checkpoint的设置）
+	
+   2. ./wangjie/word_3, 分割出一个一个中文汉字和一个一个中文单词，min_word_count = 3
+   
+   	### training
+    
+    	· 在./im2txt/configuration.py下设置必要的参数：(1) self.vocab_size = 2000
+	
+	· 将该文件夹下的target_seq.txt, input_seq.txt, mask.txt放在./im2txt/data文件夹下
+	
+	· 其他同上
+	
+	### inference
+	
+	· 将word_count_3.txt放在./im2txt/data目录下
+	
+	· 可以使用我新上传的 vocabulary.py, 添加到./im2txt/inference_utils下
+	
+	· run_inference.py里面做相应修改：
+	tf.flags.DEFINE_string("vocab_file", "data/word_count_3.txt", "Text file containing the vocabulary.")
+	
+	· 其他同上
+	
+	
