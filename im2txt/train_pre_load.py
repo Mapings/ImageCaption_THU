@@ -145,16 +145,15 @@ def main(unused_argv):
     saver = tf.train.Saver(max_to_keep=training_config.max_checkpoints_to_keep)
 
     # Create the op for initializing variables.
-    init_op = tf.group(tf.global_variables_initializer(),
-                      tf.local_variables_initializer(),)
 
-    #init_op = tf.group(tf.initialize_all_variables(), tf.initialize_local_variables())
+    init_op = tf.group(tf.initialize_all_variables(), tf.initialize_local_variables())
 
     # Create a session for running Ops on the Graph.
     sess = tf.Session()
 
     # Run the Op to initialize the variables.
     sess.run(init_op)
+    saver.restore(sess, "my_model/model.ckpt-519999")
 
     #feed_dict = {image_embeddings_initializer: data_sets.image_embeddings}
     #print(feed_dict)
@@ -170,7 +169,6 @@ def main(unused_argv):
     # Start input enqueue threads.
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
-    print("here")
     # Run training.
 
     try:
