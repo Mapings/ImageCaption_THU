@@ -63,7 +63,7 @@ class Vocabulary(object):
     self.end_id = vocab[end_word]
 #     self.start_id = start_id
 #     self.end_id = end_id
-    self.unk_id = vocab[unk_word]   #暂时删掉unk_id @汪洁
+#     self.unk_id = vocab[unk_word]   #暂时删掉unk_id @汪洁
 
   def word_to_id(self, word):
     """Returns the integer word id of a word string."""
