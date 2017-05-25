@@ -28,7 +28,7 @@ train_new.txt: results of alphabet_hanzi.py
 ##train的方法：##
 
 
-    1.将fc1_new.h5放在./im2txt/data目录下 （如果没有这个文件，可以找窦珊拷贝）
+    1.将fc1_new.h5 或者fc2_new.h5 放在./im2txt/data目录下
     
     2.在./im2txt/configuration.py下设置必要的参数，对我们来说，主要的参数有：
     
@@ -46,9 +46,9 @@ train_new.txt: results of alphabet_hanzi.py
     
 		(7) self.max_checkpoints_to_keep = 5
     
-    3. 将target_seq.txt, input_seq.txt, mask.txt放在./im2txt/data文件夹下
+    3. 将对应的target_seq.txt, input_seq.txt, mask.txt放在./im2txt/data文件夹下
     
-    4. 在 ./im2txt/train_pre_load.py中设置参数：
+    4. 在 ./im2txt/train_pre_load.py中设置迭代轮数：
     	
        tf.flags.DEFINE_integer("num_epochs", 20000000000000,".")，即train多少轮，每一轮将遍历所有数据
 	
@@ -62,27 +62,27 @@ train_new.txt: results of alphabet_hanzi.py
 
     1. 关闭train的过程（目前train和infer不能同时运行，如果发现问题解决方法，一定微信告诉@马平烁）
     
-    2. 将image_vgg19_fc1_feature.h5文件放在./im2txt/data文件夹下
+    2. 将image_vgg19_fc1_feature.h5 或者image_vgg19_fc2_feature.h5文件放在./im2txt/data文件夹下
     
        并且在./run_inference中设置
        
-                    tf.flags.DEFINE_string("input_category", "train_set",                               # or validation_set
-                    
+                    tf.flags.DEFINE_string("input_category", "train_set",                   # or validation_set or test_set
+		    
                        "File pattern or comma-separated list of file patterns "
                        
                        "of image files.")
                        
-       即选择测试的文件是train_set还是validation_set
-       
+       即选择测试的文件是train_set还是validation_set还是test_set
+      
     3. 在./run_inference中设置checkpoint文件
     
-    	tf.flags.DEFINE_string("checkpoint_path", "my_model2/model.ckpt-399999",       #set your checkpoint to load here
+    	tf.flags.DEFINE_string("checkpoint_path", "my_model/model.ckpt-399999",       #set your checkpoint to load here
 		
 			"Model checkpoint file or directory containing a "
 			
 			 "model checkpoint file.")
                        
-    4. 将word_count_all.txt放在./im2txt/data目录下,关于word_count_all.txt，ask@汪洁
+    4. 将对应的word_count_all.txt放在./im2txt/data目录下
     
     5. 运行./im2txt/run_inference.py
     
