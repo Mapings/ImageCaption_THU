@@ -69,6 +69,7 @@ def main(_):
 
   # Create the vocabulary.
   vocab = vocabulary.Vocabulary(FLAGS.vocab_file)
+  print(len(vocab.vocab))
 
   with tf.Session(graph=g) as sess:
 
@@ -93,36 +94,33 @@ def main(_):
     image_embeddings = infer_data
     f.close()
 
-    # infer_captions = []
     submit = []
     for image_idx in range(1000):                             #只测试1000个，即使是训练集也是，后续顺利的话可以重写
       image_embedding = image_embeddings[image_idx]           # A float32 np.array with shape [embedding_size]
       # print(image_embedding)
-      captions = generator.beam_search(sess, image_embedding)  #submit的时候，设置，beam_size=1,
-      # a = "Captions for image" + str(image_idx+8001) + ":"    #这里的image_idx可以加8001用于和图片标号对应
-      # infer_captions.append(a)
-      # print(a)    
-      picture_id = str(image_idx+9000) 
-      print(picture_id)
+      captions = generator.beam_search(sess, image_embedding)  #submit的时候，设置，beam_size=1！！！wrong
+      picture_id = str(image_idx+9000)      #这里的image_idx可以加9000用于和图片标号对应
+      # print(picture_id)
+      select_first = []
       for i, caption in enumerate(captions):
         # Ignore begin and end words.
         sentence = [vocab.id_to_word(w) for w in caption.sentence[1:-1]]
-        sentence = "".join(sentence)         # 分词，词之间直接相连
-        # sentence = " ".join(sentence)           # 分字
-        # b = "  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob))
-        # print(b)
-        # infer_captions.append(b)
-        sentence = str(list(sentence))   #分词
-        s = sentence[1:-1]               #分词
-        s = s.replace(',','')            #分词
-        s = s.replace("'",'')            #分词
-        caption = "%s %s" % (picture_id, s)          #分词
-        # caption = "%s %s" % (picture_id, sentence)   #分字
-        print(caption)
-        submit.append(caption)
+        if len(vocab.vocab)<3000:
+          sentence = " ".join(sentence)           # 分字
+          caption = "%s %s" % (picture_id, sentence)   #分字
+        else:
+          sentence = "".join(sentence)         # 分词，词之间直接相连
+          sentence = str(list(sentence))   #分词
+          s = sentence[1:-1]               #分词
+          s = s.replace(',','')            #分词
+          s = s.replace("'",'')            #分词
+          caption = "%s %s" % (picture_id, s)          #分词
+        select_first.append(caption)
+      # print(select_first)
+      submit.append(select_first[0])
+    # print(submit)
     # open('Results/inference_captions.txt', 'w').write('%s' % '\n'.join(infer_captions)) 
     open('Results/submit_lzg_8.txt', 'w').write('%s' % '\n'.join(submit)) 
-    
 
 
 if __name__ == "__main__":
