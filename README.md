@@ -1,11 +1,6 @@
 # ImageCaption_THU
 
 
-#----------------------------------------  可删  ---------------------------------------#
-alphabet_hanzi.py: used for set up a dictionary of Chinese characters from the training image_captions
-
-train_new.txt: results of alphabet_hanzi.py
-
 #---------------------------------------- 20170514：input data to train ---------------------------------------#
 
 初步的train方法：
