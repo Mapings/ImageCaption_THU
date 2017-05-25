@@ -1,22 +1,5 @@
 # ImageCaption_THU
 
-
-#---------------------------------------- 20170514：input data to train ---------------------------------------#
-
-初步的train方法：
-  cd ./im2txt
-  python train_preload.py
-
-待完成：
-  @窦珊 在 ./im2txt/input_data.py下完善代码
-  
-  @汪洁 在 ./im2txt/input_data.py下完善代码
-  
- #2017.5.16   input_seq, target_seq, mask 已完善；
-  至于：#seq_embeddings 是什么意思？ 
-  
-  @all，写一个infer脚本，测试程序的正确性
-
 #-------------------------------------- 20170522: train和infer的教程 -----------------------------------------------#
 
 
