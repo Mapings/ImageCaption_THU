@@ -1,3 +1,5 @@
-Founder	checkpoint	bleu-1	bleu-2	bleu-3	bleu-4	rouge	cider
-mps	model.ckpt-399999	0.636	0.488	0.37	0.283	0.488	0.982
-lzg	model.ckpt-899999	0.649	0.509	0.394	0.306	0.494	1.054							
+Founder	checkpoint	bleu-1	bleu-2	bleu-3	bleu-4	rouge	cider	note
+mps	model.ckpt-399999	0.636	0.488	0.37	0.283	0.488	0.982	
+lzg	model.ckpt-899999	0.649	0.509	0.394	0.306	0.494	1.054	UNK
+lzg	model.ckpt-699999	0.651	0.51	0.395	0.306	0.495	1.065	
+lzg	model.ckpt-899999	0.651	0.51	0.395	0.306	0.495	1.065							
