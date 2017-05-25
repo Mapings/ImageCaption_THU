@@ -35,22 +35,30 @@ import h5py
 
 FLAGS = tf.flags.FLAGS
 
-tf.flags.DEFINE_string("checkpoint_path", "my_model2/model.ckpt-399999",
+tf.flags.DEFINE_string("checkpoint_path", "my_model2/model.ckpt-899999",
                        "Model checkpoint file or directory containing a "
                        "model checkpoint file.")
-tf.flags.DEFINE_string("vocab_file", "data/word_count_all.txt", "Text file containing the vocabulary.")
+tf.flags.DEFINE_string("vocab_file", "data/wordlac_count_2.txt", "Text file containing the vocabulary.")
 tf.flags.DEFINE_string("input_files", "data/image_vgg19_fc1_feature.h5",
                        "File pattern or comma-separated list of file patterns "
                        "of image files.")
-tf.flags.DEFINE_string("input_category", "train_set",                               # or validation_set
+tf.flags.DEFINE_string("input_category", "validation_set",                               # or validation_set
                        "File pattern or comma-separated list of file patterns "
                        "of image files.")
+tf.flags.DEFINE_string("Results_dir", "./Results",
+                       "Directory for saving generative captions.")
 
 tf.logging.set_verbosity(tf.logging.INFO)
 
 
 def main(_):
   # Build the inference graph.
+  # Create results directory.
+  Results_dir = FLAGS.Results_dir
+  if not tf.gfile.IsDirectory(Results_dir):
+    tf.logging.info("Creating results directory: %s", Results_dir)
+    tf.gfile.MakeDirs(Results_dir)
+
   g = tf.Graph()
 
   with g.as_default():
@@ -90,9 +98,9 @@ def main(_):
       image_embedding = image_embeddings[image_idx]           # A float32 np.array with shape [embedding_size]
       # print(image_embedding)
       captions = generator.beam_search(sess, image_embedding)
-      a = "Captions for image" + str(image_idx+8001) + ":"       #这里的image_idx可以加8001用于和图片标号对应
+      a = "Captions for image" + str(image_idx+8001) + ":"      #这里的image_idx可以加8001用于和图片标号对应
       infer_captions.append(a)
-      print(a)                                       
+      print(a)     
       for i, caption in enumerate(captions):
         # Ignore begin and end words.
         sentence = [vocab.id_to_word(w) for w in caption.sentence[1:-1]]
@@ -100,7 +108,7 @@ def main(_):
         b = "  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob))
         infer_captions.append(b)
         print(b)
-    open('inference_captions.txt', 'w').write('%s' % '\n'.join(infer_captions)) 
+    open('Results/inference_captions.txt', 'w').write('%s' % '\n'.join(infer_captions)) 
 
 if __name__ == "__main__":
   tf.app.run()
