@@ -42,7 +42,7 @@ tf.flags.DEFINE_string("vocab_file", "data/wordlac_count_2.txt", "Text file cont
 tf.flags.DEFINE_string("input_files", "data/image_vgg19_fc1_feature.h5",
                        "File pattern or comma-separated list of file patterns "
                        "of image files.")
-tf.flags.DEFINE_string("input_category", "validation_set",                               # or validation_set
+tf.flags.DEFINE_string("input_category", "test_set",                               # or validation_set
                        "File pattern or comma-separated list of file patterns "
                        "of image files.")
 tf.flags.DEFINE_string("Results_dir", "./Results",
@@ -93,22 +93,37 @@ def main(_):
     image_embeddings = infer_data
     f.close()
 
-    infer_captions = []
+    # infer_captions = []
+    submit = []
     for image_idx in range(1000):                             #只测试1000个，即使是训练集也是，后续顺利的话可以重写
       image_embedding = image_embeddings[image_idx]           # A float32 np.array with shape [embedding_size]
       # print(image_embedding)
-      captions = generator.beam_search(sess, image_embedding)
-      a = "Captions for image" + str(image_idx+8001) + ":"      #这里的image_idx可以加8001用于和图片标号对应
-      infer_captions.append(a)
-      print(a)     
+      captions = generator.beam_search(sess, image_embedding)  #submit的时候，简单处理，beam_size=1,
+      # a = "Captions for image" + str(image_idx+8001) + ":"    #这里的image_idx可以加8001用于和图片标号对应
+      a_a = str(image_idx+9000)
+      # infer_captions.append(a)
+      # print(a)     
+      # print(a_a)
       for i, caption in enumerate(captions):
         # Ignore begin and end words.
         sentence = [vocab.id_to_word(w) for w in caption.sentence[1:-1]]
-        sentence = " ".join(sentence)
-        b = "  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob))
-        infer_captions.append(b)
-        print(b)
-    open('Results/inference_captions.txt', 'w').write('%s' % '\n'.join(infer_captions)) 
+        sentence = "".join(sentence)         # 分词
+        # sentence = " ".join(sentence)           # 分字
+        # b = "  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob))
+        # infer_captions.append(b)
+        sentence = str(list(sentence))   #分词
+        s = sentence[1:-1]               #分词
+        s = s.replace(',','')            #分词
+        s = s.replace("'",'')            #分词
+        c = "%s %s" % (a_a, s)          #分词
+        # c = "%s %s" % (a_a, sentence)   #分字
+        # print(b)
+        # print(c)
+        submit.append(c)
+    # open('Results/inference_captions.txt', 'w').write('%s' % '\n'.join(infer_captions)) 
+    open('Results/submit_lzg.txt', 'w').write('%s' % '\n'.join(submit)) 
+    
+
 
 if __name__ == "__main__":
   tf.app.run()
