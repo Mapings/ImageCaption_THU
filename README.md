@@ -97,10 +97,10 @@ train_new.txt: results of alphabet_hanzi.py
 	
 	### inference
 	
-	· 将wordlac_count_2.txt放在./im2txt/data目录下，需要在最后一行加入UNK，但是生成句子就有很多UNK @马平烁 @窦珊，现在不知道咋整
+	· 将wordlac_count_all.txt放在./im2txt/data目录下。这里一定要注意，使用所有word的频数统计的txt，否则会生成unk_id
 	
 	· run_inference.py里面做相应修改：
-	tf.flags.DEFINE_string("vocab_file", "data/wordlac_count_2.txt", "Text file containing the vocabulary.")
+	tf.flags.DEFINE_string("vocab_file", "data/wordlac_count_all.txt", "Text file containing the vocabulary.")
 	
 	· ./im2txt/inference_utils/vocabulary.py 已经做了修改
 	
@@ -108,28 +108,17 @@ train_new.txt: results of alphabet_hanzi.py
 	
 	
 	
-   2. ./wangjie/word_3, 分割出一个一个中文汉字和一个一个中文单词，min_word_count = 3
+   2. ./wangjie/word_3, 分割出一个一个中文汉字和一个一个英文单词，min_word_count = 3
    
    	### training
     
     	· 在./im2txt/configuration.py下设置必要的参数：(1) self.vocab_size = 2000
-	
-	· 将该文件夹下的target_seq.txt, input_seq.txt, mask.txt放在./im2txt/data文件夹下
-	
-	· 其他同上
-	
-	### inference
-	
-	· 将word_count_3.txt放在./im2txt/data目录下，需要在最后一行加入UNK
-	
-	· run_inference.py里面做相应修改：
-	tf.flags.DEFINE_string("vocab_file", "data/word_count_3.txt", "Text file containing the vocabulary.")
 	
 	· 其他同上
 	
 	#--------------------------------------20170525-----------------------------------------------#
 
 	### training
-	run_inference.py 做了修改，可以生成inference_captions.txt文件在工作目录下
+	run_inference.py 做了修改，可以生成submit.txt文件在工作目录下新建的文件夹Results中
 	
 	
