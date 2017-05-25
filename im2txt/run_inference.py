@@ -85,15 +85,22 @@ def main(_):
     image_embeddings = infer_data
     f.close()
 
+    infer_captions = []
     for image_idx in range(1000):                             #只测试1000个，即使是训练集也是，后续顺利的话可以重写
       image_embedding = image_embeddings[image_idx]           # A float32 np.array with shape [embedding_size]
+      # print(image_embedding)
       captions = generator.beam_search(sess, image_embedding)
-      print("Captions for image" + str(image_idx+8001) + ":")     #这里的image_idx可以加8001用于和图片标号对应
+      a = "Captions for image" + str(image_idx+8001) + ":"       #这里的image_idx可以加8001用于和图片标号对应
+      infer_captions.append(a)
+      print(a)                                       
       for i, caption in enumerate(captions):
         # Ignore begin and end words.
         sentence = [vocab.id_to_word(w) for w in caption.sentence[1:-1]]
         sentence = " ".join(sentence)
-        print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
+        b = "  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob))
+        infer_captions.append(b)
+        print(b)
+    open('inference_captions.txt', 'w').write('%s' % '\n'.join(infer_captions)) 
 
 if __name__ == "__main__":
   tf.app.run()
