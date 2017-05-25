@@ -1,10 +1,12 @@
 # ImageCaption_THU
 
+
+#----------------------------------------  可删  ---------------------------------------#
 alphabet_hanzi.py: used for set up a dictionary of Chinese characters from the training image_captions
 
 train_new.txt: results of alphabet_hanzi.py
 
-#----------------------------------------20170514---------------------------------------#
+#---------------------------------------- 20170514：input data to train ---------------------------------------#
 
 初步的train方法：
   cd ./im2txt
@@ -20,9 +22,11 @@ train_new.txt: results of alphabet_hanzi.py
   
   @all，写一个infer脚本，测试程序的正确性
 
-#--------------------------------------20170522-----------------------------------------------#
+#-------------------------------------- 20170522: train和infer的教程 -----------------------------------------------#
+
 
 ##train的方法：##
+
 
     1.将fc1_new.h5放在./im2txt/data目录下 （如果没有这个文件，可以找窦珊拷贝）
     
@@ -46,14 +50,15 @@ train_new.txt: results of alphabet_hanzi.py
     
     4. 在 ./im2txt/train_pre_load.py中设置参数：
     	
-	tf.flags.DEFINE_integer("num_epochs", 20000000000000,".")，即train多少轮
-    
+       tf.flags.DEFINE_integer("num_epochs", 20000000000000,".")，即train多少轮，每一轮将遍历所有数据
+	
        运行./im2txt/train_pre_load.py
        
        你将在./im2txt/my_model下发现一些checkpoint文件
        
 
 ##infer的方法：##
+
 
     1. 关闭train的过程（目前train和infer不能同时运行，如果发现问题解决方法，一定微信告诉@马平烁）
     
@@ -81,7 +86,7 @@ train_new.txt: results of alphabet_hanzi.py
     
     5. 运行./im2txt/run_inference.py
     
-    #--------------------------------------20170524-----------------------------------------------#
+#--------------------------------------20170524：关于不同训练字典、不同参数如何训练和测试----------------------------------------------#
 
 ##创建了两个文件夹，包含新的训练字典：##
 
@@ -93,7 +98,7 @@ train_new.txt: results of alphabet_hanzi.py
 	
 	· 将该文件夹下的target_seq.txt, input_seq.txt, mask.txt放在./im2txt/data文件夹下
 	
-	· 其他同上
+	· train it 
 	
 	### inference
 	
@@ -102,10 +107,7 @@ train_new.txt: results of alphabet_hanzi.py
 	· run_inference.py里面做相应修改：
 	tf.flags.DEFINE_string("vocab_file", "data/wordlac_count_all.txt", "Text file containing the vocabulary.")
 	
-	· ./im2txt/inference_utils/vocabulary.py 已经做了修改
-	
-	· 其他同上（包括run_inference.py 里面checkpoint的设置）
-	
+	· train it 
 	
 	
    2. ./wangjie/word_3, 分割出一个一个中文汉字和一个一个英文单词，min_word_count = 3
@@ -116,9 +118,10 @@ train_new.txt: results of alphabet_hanzi.py
 	
 	· 其他同上
 	
-	#--------------------------------------20170525-----------------------------------------------#
+	#--------------------------------------20170525:生成用于提交测试的txt文件-----------------------------------------------#
 
-	### training
-	run_inference.py 做了修改，可以生成submit.txt文件在工作目录下新建的文件夹Results中
+	run_inference.py 即可
+	
+	生成的submit.txt文件在工作目录下新建的文件夹Results中
 	
 	
