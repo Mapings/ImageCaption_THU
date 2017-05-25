@@ -38,11 +38,11 @@ FLAGS = tf.flags.FLAGS
 tf.flags.DEFINE_string("checkpoint_path", "my_model2/model.ckpt-899999",
                        "Model checkpoint file or directory containing a "
                        "model checkpoint file.")
-tf.flags.DEFINE_string("vocab_file", "data/wordlac_count_2.txt", "Text file containing the vocabulary.")
+tf.flags.DEFINE_string("vocab_file", "data/wordlac_count_all.txt", "Text file containing the vocabulary.")
 tf.flags.DEFINE_string("input_files", "data/image_vgg19_fc1_feature.h5",
                        "File pattern or comma-separated list of file patterns "
                        "of image files.")
-tf.flags.DEFINE_string("input_category", "test_set",                               # or validation_set
+tf.flags.DEFINE_string("input_category", "test_set",                       # or validation_set
                        "File pattern or comma-separated list of file patterns "
                        "of image files.")
 tf.flags.DEFINE_string("Results_dir", "./Results",
@@ -98,30 +98,30 @@ def main(_):
     for image_idx in range(1000):                             #只测试1000个，即使是训练集也是，后续顺利的话可以重写
       image_embedding = image_embeddings[image_idx]           # A float32 np.array with shape [embedding_size]
       # print(image_embedding)
-      captions = generator.beam_search(sess, image_embedding)  #submit的时候，简单处理，beam_size=1,
+      captions = generator.beam_search(sess, image_embedding)  #submit的时候，设置，beam_size=1,
       # a = "Captions for image" + str(image_idx+8001) + ":"    #这里的image_idx可以加8001用于和图片标号对应
-      a_a = str(image_idx+9000)
       # infer_captions.append(a)
-      # print(a)     
-      # print(a_a)
+      # print(a)    
+      picture_id = str(image_idx+9000) 
+      print(picture_id)
       for i, caption in enumerate(captions):
         # Ignore begin and end words.
         sentence = [vocab.id_to_word(w) for w in caption.sentence[1:-1]]
-        sentence = "".join(sentence)         # 分词
+        sentence = "".join(sentence)         # 分词，词之间直接相连
         # sentence = " ".join(sentence)           # 分字
         # b = "  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob))
+        # print(b)
         # infer_captions.append(b)
         sentence = str(list(sentence))   #分词
         s = sentence[1:-1]               #分词
         s = s.replace(',','')            #分词
         s = s.replace("'",'')            #分词
-        c = "%s %s" % (a_a, s)          #分词
-        # c = "%s %s" % (a_a, sentence)   #分字
-        # print(b)
-        # print(c)
-        submit.append(c)
+        caption = "%s %s" % (picture_id, s)          #分词
+        # caption = "%s %s" % (picture_id, sentence)   #分字
+        print(caption)
+        submit.append(caption)
     # open('Results/inference_captions.txt', 'w').write('%s' % '\n'.join(infer_captions)) 
-    open('Results/submit_lzg.txt', 'w').write('%s' % '\n'.join(submit)) 
+    open('Results/submit_lzg_8.txt', 'w').write('%s' % '\n'.join(submit)) 
     
 
 
