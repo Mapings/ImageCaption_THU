@@ -1,4 +1,4 @@
-Founder	checkpoint	bleu-1	bleu-2	bleu-3	bleu-4	rouge	cider	BeamSearch	fc	note
+Founder	checkpoint		bleu-1	bleu-2	bleu-3	bleu-4	rouge	cider	BeamSearch	fc	note
 mps	model.ckpt-399999	0.636	0.488	0.37	0.283	0.488	0.982	k =1	1	
 lzg	model.ckpt-899999	0.649	0.509	0.394	0.306	0.494	1.054	k =1	1	UNK
 lzg	model.ckpt-699999	0.651	0.51	0.395	0.306	0.495	1.065	k =1	1	
@@ -8,3 +8,4 @@ ds	model.ckpt-469999	0.651	0.509	0.393	0.303	0.497	1.052	k =3	2
 lzg	model.ckpt-699999	0.664	0.53	0.419	0.33	0.502	1.109	k =3	1	
 lzg	model.ckpt-899999	0.664	0.53	0.419	0.33	0.502	1.109	k =3	1	
 ds	model.ckpt-1019999	0.647	0.502	0.386	0.297	0.485	1.006	k =3	2
+ds	model.ckpt-979999	0.653	0.509	0.391	0.299	0.491	1.035	k =3	2
