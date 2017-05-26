@@ -155,7 +155,7 @@ def main(unused_argv):
 
     # Run the Op to initialize the variables.
     sess.run(init_op)
-    saver.restore(sess, "my_model/model.ckpt-519999")
+    # saver.restore(sess, "my_model/model.ckpt-519999")
 
     #feed_dict = {image_embeddings_initializer: data_sets.image_embeddings}
     #print(feed_dict)

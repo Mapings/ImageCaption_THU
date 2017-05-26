@@ -35,14 +35,14 @@ import h5py
 
 FLAGS = tf.flags.FLAGS
 
-tf.flags.DEFINE_string("checkpoint_path", "my_model2/model.ckpt-399999",
+tf.flags.DEFINE_string("checkpoint_path", "my_model/model.ckpt-559999",
                        "Model checkpoint file or directory containing a "
                        "model checkpoint file.")
 tf.flags.DEFINE_string("vocab_file", "data/word_count_all.txt", "Text file containing the vocabulary.")
 tf.flags.DEFINE_string("input_files", "data/image_vgg19_fc1_feature.h5",
                        "File pattern or comma-separated list of file patterns "
                        "of image files.")
-tf.flags.DEFINE_string("input_category", "train_set",                               # or validation_set
+tf.flags.DEFINE_string("input_category", "validation_set",                               # or validation_set
                        "File pattern or comma-separated list of file patterns "
                        "of image files.")
 
