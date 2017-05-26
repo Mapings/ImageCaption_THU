@@ -35,22 +35,30 @@ import h5py
 
 FLAGS = tf.flags.FLAGS
 
-tf.flags.DEFINE_string("checkpoint_path", "my_model/model.ckpt-559999",
+tf.flags.DEFINE_string("checkpoint_path", "my_model2/model.ckpt-899999",
                        "Model checkpoint file or directory containing a "
                        "model checkpoint file.")
-tf.flags.DEFINE_string("vocab_file", "data/word_count_all.txt", "Text file containing the vocabulary.")
+tf.flags.DEFINE_string("vocab_file", "data/wordlac_count_all.txt", "Text file containing the vocabulary.")
 tf.flags.DEFINE_string("input_files", "data/image_vgg19_fc1_feature.h5",
                        "File pattern or comma-separated list of file patterns "
                        "of image files.")
-tf.flags.DEFINE_string("input_category", "validation_set",                               # or validation_set
+tf.flags.DEFINE_string("input_category", "test_set",                       # or validation_set
                        "File pattern or comma-separated list of file patterns "
                        "of image files.")
+tf.flags.DEFINE_string("Results_dir", "./Results",
+                       "Directory for saving generative captions.")
 
 tf.logging.set_verbosity(tf.logging.INFO)
 
 
 def main(_):
   # Build the inference graph.
+  # Create results directory.
+  Results_dir = FLAGS.Results_dir
+  if not tf.gfile.IsDirectory(Results_dir):
+    tf.logging.info("Creating results directory: %s", Results_dir)
+    tf.gfile.MakeDirs(Results_dir)
+
   g = tf.Graph()
 
   with g.as_default():
@@ -61,6 +69,7 @@ def main(_):
 
   # Create the vocabulary.
   vocab = vocabulary.Vocabulary(FLAGS.vocab_file)
+  print(len(vocab.vocab))
 
   with tf.Session(graph=g) as sess:
 
@@ -85,15 +94,34 @@ def main(_):
     image_embeddings = infer_data
     f.close()
 
+    submit = []
     for image_idx in range(1000):                             #只测试1000个，即使是训练集也是，后续顺利的话可以重写
       image_embedding = image_embeddings[image_idx]           # A float32 np.array with shape [embedding_size]
-      captions = generator.beam_search(sess, image_embedding)
-      print("Captions for image" + str(image_idx+8001) + ":")     #这里的image_idx可以加8001用于和图片标号对应
+      # print(image_embedding)
+      captions = generator.beam_search(sess, image_embedding)  #submit的时候，设置，beam_size=1！！！wrong
+      picture_id = str(image_idx+9000)      #这里的image_idx可以加9000用于和图片标号对应
+      # print(picture_id)
+      select_first = []
       for i, caption in enumerate(captions):
         # Ignore begin and end words.
         sentence = [vocab.id_to_word(w) for w in caption.sentence[1:-1]]
-        sentence = " ".join(sentence)
-        print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
+        if len(vocab.vocab)<3000:
+          sentence = " ".join(sentence)           # 分字
+          caption = "%s %s" % (picture_id, sentence)   #分字
+        else:
+          sentence = "".join(sentence)         # 分词，词之间直接相连
+          sentence = str(list(sentence))   #分词
+          s = sentence[1:-1]               #分词
+          s = s.replace(',','')            #分词
+          s = s.replace("'",'')            #分词
+          caption = "%s %s" % (picture_id, s)          #分词
+        select_first.append(caption)
+      # print(select_first)
+      submit.append(select_first[0])
+    # print(submit)
+    # open('Results/inference_captions.txt', 'w').write('%s' % '\n'.join(infer_captions)) 
+    open('Results/submit_lzg_8.txt', 'w').write('%s' % '\n'.join(submit)) 
+
 
 if __name__ == "__main__":
   tf.app.run()
