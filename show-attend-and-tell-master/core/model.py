@@ -16,7 +16,7 @@ import tensorflow as tf
 
 
 class CaptionGenerator(object):
-    def __init__(self, word_to_idx, dim_feature=[196, 512], dim_embed=512, dim_hidden=1024, n_time_step=16, 
+    def __init__(self, word_to_idx, dim_feature=[49, 512], dim_embed=512, dim_hidden=1024, n_time_step=16,
                   prev2out=True, ctx2out=True, alpha_c=0.0, selector=True, dropout=True):
         """
         Args:
@@ -32,19 +32,20 @@ class CaptionGenerator(object):
             dropout: (optional) If true then dropout layer is added.
         """
         
-        self.word_to_idx = word_to_idx
+        self.word_to_idx = word_to_idx#字典，字to序号
         self.idx_to_word = {i: w for w, i in word_to_idx.iteritems()}
         self.prev2out = prev2out
         self.ctx2out = ctx2out
         self.alpha_c = alpha_c
         self.selector = selector
         self.dropout = dropout
-        self.V = len(word_to_idx)
-        self.L = dim_feature[0]
-        self.D = dim_feature[1]
-        self.M = dim_embed
-        self.H = dim_hidden
-        self.T = n_time_step
+        self.V = len(word_to_idx)# V is vocabulary size (about 10000).
+        self.L = dim_feature[0]# L is spacial size of feature vector (49).#我们改为49
+        self.D = dim_feature[1] # D is dimension of image feature vector (512).
+        self.M = dim_embed# M is dimension of word vector which is embedding size (default is 512).
+        self.H = dim_hidden# H is dimension of hidden state (default is 1024).
+        self.T = n_time_step# T is the number of time step which is equal to caption's length-1 (16).
+        #@汪洁，起始和终止设置是否合适
         self._start = word_to_idx['<START>']
         self._null = word_to_idx['<NULL>']
 
@@ -67,7 +68,6 @@ class CaptionGenerator(object):
             w_c = tf.get_variable('w_c', [self.D, self.H], initializer=self.weight_initializer)
             b_c = tf.get_variable('b_c', [self.H], initializer=self.const_initializer)
             c = tf.nn.tanh(tf.matmul(features_mean, w_c) + b_c)
-            return c, h
 
     def _word_embedding(self, inputs, reuse=False):
         with tf.variable_scope('word_embedding', reuse=reuse):

@@ -8,9 +8,9 @@ def main():
     data = load_coco_data(data_path='./data', split='train')
     word_to_idx = data['word_to_idx']
     # load val dataset to print out bleu scores every epoch
-    val_data = load_coco_data(data_path='./data', split='val')
+    val_data = load_coco_data(data_path='./data', split='vali')
 
-    model = CaptionGenerator(word_to_idx, dim_feature=[196, 512], dim_embed=512,
+    model = CaptionGenerator(word_to_idx, dim_feature=[49, 512], dim_embed=512,
                                        dim_hidden=1024, n_time_step=16, prev2out=True, 
                                                  ctx2out=True, alpha_c=1.0, selector=True, dropout=True)
 

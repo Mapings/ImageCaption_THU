@@ -16,10 +16,10 @@ class CaptioningSolver(object):
         Required Arguments:
             - model: Show Attend and Tell caption generating model
             - data: Training data; dictionary with the following keys:
-                - features: Feature vectors of shape (82783, 196, 512)
-                - file_names: Image file names of shape (82783, )
-                - captions: Captions of shape (400000, 17) 
-                - image_idxs: Indices for mapping caption to image of shape (400000, ) 
+                - features: Feature vectors of shape (8000, 49, 512)
+                - file_names: Image file names of shape (8000, )
+                - captions: Captions of shape (38445, 17)
+                - image_idxs: Indices for mapping caption to image of shape (38445, )
                 - word_to_idx: Mapping dictionary from word to index 
             - val_data: validation data; for print out BLEU scores for each epoch.
         Optional Arguments:
@@ -155,7 +155,9 @@ class CaptioningSolver(object):
                     for i in range(n_iters_val):
                         features_batch = val_features[i*self.batch_size:(i+1)*self.batch_size]
                         feed_dict = {self.model.features: features_batch}
-                        gen_cap = sess.run(generated_captions, feed_dict=feed_dict)  
+                        gen_cap = sess.run(generated_captions, feed_dict=feed_dict)
+                        #decoded = decode_captions(gen_caps, self.model.idx_to_word)
+                        #print "Generated caption: %s\n" %decoded[0]
                         all_gen_cap[i*self.batch_size:(i+1)*self.batch_size] = gen_cap
                     
                     all_decoded = decode_captions(all_gen_cap, self.model.idx_to_word)

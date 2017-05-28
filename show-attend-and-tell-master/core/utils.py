@@ -6,22 +6,32 @@ import os
 
 
 def load_coco_data(data_path='./data', split='train'):
-    data_path = os.path.join(data_path, split)
+
     start_t = time.time()
     data = {}
   
-    data['features'] = hickle.load(os.path.join(data_path, '%s.features.hkl' %split))
-    with open(os.path.join(data_path, '%s.file.names.pkl' %split), 'rb') as f:
-        data['file_names'] = pickle.load(f)   
-    with open(os.path.join(data_path, '%s.captions.pkl' %split), 'rb') as f:
+  
+  
+    # 读入features
+    f = h5py.File(data_path+'/vgg19_new.h5','r')
+    split_data = np.array(f[split],dtype=np.float32)
+    data['features']=np.transpose(split_data,(2,1,0))
+    if split == 'train':
+        data['file_names'] = np.arange(split_data.shape[0])+1
+        #image_idxs: Indices for mapping caption to image of shape（40000，） 设caption为40000个
+        image_idxs = np.array(f['image_idxs'],dtype=np.float32)
+        data['image_idxs'] = np.transpose(image_idxs)
+    
+    
+    #@汪洁在这里写入caption和'word_to_idx'，注意前面读文件已经用过f变量
+    #captions: Captions of shape (400000, 17) 是句长为17
+    #word_to_idx: Mapping dictionary from word to index
+    if split == 'train':
         data['captions'] = pickle.load(f)
-    with open(os.path.join(data_path, '%s.image.idxs.pkl' %split), 'rb') as f:
-        data['image_idxs'] = pickle.load(f)
-            
-    if split == 'train':       
         with open(os.path.join(data_path, 'word_to_idx.pkl'), 'rb') as f:
             data['word_to_idx'] = pickle.load(f)
-          
+
+
     for k, v in data.iteritems():
         if type(v) == np.ndarray:
             print k, type(v), v.shape, v.dtype
@@ -29,8 +39,10 @@ def load_coco_data(data_path='./data', split='train'):
             print k, type(v), len(v)
     end_t = time.time()
     print "Elapse time: %.2f" %(end_t - start_t)
+    f.close()
     return data
 
+#@汪洁，在这里加入由序列转换为句子
 def decode_captions(captions, idx_to_word):
     if captions.ndim == 1:
         T = captions.shape[0]

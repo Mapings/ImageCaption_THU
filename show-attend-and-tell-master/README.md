@@ -47,6 +47,7 @@ $ python resize.py
 Before training the model, you have to preprocess the <i>MSCOCO caption dataset</i>.
 To generate caption dataset and image feature vectors, run command below.
 
+
 ```bash
 $ python prepro.py
 ```
