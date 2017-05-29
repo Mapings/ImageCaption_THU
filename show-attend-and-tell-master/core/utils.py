@@ -32,7 +32,7 @@ def load_coco_data(data_path='./data', split='train'):
             data['word_to_idx'] = pickle.load(f)
 
 
-    for k, v in data.iteritems():
+    for k, v in data.items():
         if type(v) == np.ndarray:
             print k, type(v), v.shape, v.dtype
         else:
