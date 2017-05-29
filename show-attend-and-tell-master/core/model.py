@@ -2,7 +2,7 @@
 # Implementation of "Show, Attend and Tell: Neural Caption Generator With Visual Attention".
 # There are some notations.
 # N is batch size.
-# L is spacial size of feature vector (196).
+# L is spacial size of feature vector (49).
 # D is dimension of image feature vector (512).
 # T is the number of time step which is equal to caption's length-1 (16).
 # V is vocabulary size (about 10000).
@@ -17,7 +17,7 @@ import tensorflow as tf
 
 class CaptionGenerator(object):
     def __init__(self, word_to_idx, dim_feature=[49, 512], dim_embed=512, dim_hidden=1024, n_time_step=16,
-                  prev2out=True, ctx2out=True, alpha_c=0.0, selector=True, dropout=True):
+                  prev2out=True, ctx2out=True, alpha_c=0.0, selector=True, dropout=True,max_len):
         """
         Args:
             word_to_idx: word-to-index mapping dictionary.
@@ -46,6 +46,7 @@ class CaptionGenerator(object):
         self.H = dim_hidden# H is dimension of hidden state (default is 1024).
         self.T = n_time_step# T is the number of time step which is equal to caption's length-1 (16).
         #@汪洁，起始和终止设置是否合适
+        self.max_len=max_len
         self._start = word_to_idx['<START>']
         self._null = word_to_idx['<NULL>']
 
@@ -173,12 +174,12 @@ class CaptionGenerator(object):
         if self.alpha_c > 0:
             alphas = tf.transpose(tf.pack(alpha_list), (1, 0, 2))     # (N, T, L)
             alphas_all = tf.reduce_sum(alphas, 1)      # (N, L)
-            alpha_reg = self.alpha_c * tf.reduce_sum((16./196 - alphas_all) ** 2)     
+            alpha_reg = self.alpha_c * tf.reduce_sum((16./49 - alphas_all) ** 2)     
             loss += alpha_reg
 
         return loss / tf.to_float(batch_size)
 
-    def build_sampler(self, max_len=20):
+    def build_sampler(self, max_len):
         features = self.features
         
         # batch normalize feature vectors

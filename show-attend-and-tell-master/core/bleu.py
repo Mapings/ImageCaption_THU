@@ -26,7 +26,7 @@ def score(ref, hypo):
     return final_scores
     
 
-def evaluate(data_path='./data', split='val', get_scores=False):
+def evaluate(data_path='./data', split='test', get_scores=False):
     reference_path = os.path.join(data_path, "%s/%s.references.pkl" %(split, split))
     candidate_path = os.path.join(data_path, "%s/%s.candidate.captions.pkl" %(split, split))
     

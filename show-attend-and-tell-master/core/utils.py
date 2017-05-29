@@ -24,7 +24,11 @@ def load_coco_data(data_path='./data', split='train'):
     
     
     #@汪洁在这里写入caption和'word_to_idx'，注意前面读文件已经用过f变量
-    #captions: Captions of shape (400000, 17) 是句长为17
+    #captions: Captions of shape (400000, 17) 是句长为17，建议包括起始符号，终止符号，无效部分用‘NULL’代替
+    #self._start = word_to_idx['<START>']
+    #self._null = word_to_idx['<NULL>']
+    #self._null = word_to_idx['<END>']
+    #但是我没有发现训练的时候哪里用到了END符号，这个汪洁你自己看看吧
     #word_to_idx: Mapping dictionary from word to index
     if split == 'train':
         data['captions'] = pickle.load(f)
@@ -58,6 +62,7 @@ def decode_captions(captions, idx_to_word):
                 word = idx_to_word[captions[t]]
             else:
                 word = idx_to_word[captions[i, t]]
+            #如果null与结束符号相同，这里应该做相应修改
             if word == '<END>':
                 words.append('.')
                 break

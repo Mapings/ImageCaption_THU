@@ -7,11 +7,11 @@ import os
 import cPickle as pickle
 from scipy import ndimage
 from utils import *
-from bleu import evaluate
+#from bleu import evaluate
 
 
 class CaptioningSolver(object):
-    def __init__(self, model, data, val_data, **kwargs):
+    def __init__(self, model, data, test_data, **kwargs):
         """
         Required Arguments:
             - model: Show Attend and Tell caption generating model
@@ -21,7 +21,7 @@ class CaptioningSolver(object):
                 - captions: Captions of shape (38445, 17)
                 - image_idxs: Indices for mapping caption to image of shape (38445, )
                 - word_to_idx: Mapping dictionary from word to index 
-            - val_data: validation data; for print out BLEU scores for each epoch.
+            - test_data: test data; for print out BLEU scores for each epoch.
         Optional Arguments:
             - n_epochs: The number of epochs to run for training.
             - batch_size: Mini batch size.
@@ -32,22 +32,25 @@ class CaptioningSolver(object):
             - pretrained_model: String; pretrained model path 
             - model_path: String; model path for saving 
             - test_model: String; model path for test 
+            - n_iters_test = int(np.ceil(float(test_features.shape[0])/self.batch_size))，所以test_features是batch_size的倍数？
+
         """
 
         self.model = model
         self.data = data
-        self.val_data = val_data
+        self.test_data = test_data
         self.n_epochs = kwargs.pop('n_epochs', 10)
-        self.batch_size = kwargs.pop('batch_size', 100)
+        self.batch_size = kwargs.pop('batch_size', 20)
         self.update_rule = kwargs.pop('update_rule', 'adam')
         self.learning_rate = kwargs.pop('learning_rate', 0.01)
-        self.print_bleu = kwargs.pop('print_bleu', False)
+        self.test_or_not = kwargs.pop('test_or_not', False)
         self.print_every = kwargs.pop('print_every', 100)
         self.save_every = kwargs.pop('save_every', 1)
         self.log_path = kwargs.pop('log_path', './log/')
         self.model_path = kwargs.pop('model_path', './model/')
         self.pretrained_model = kwargs.pop('pretrained_model', None)
         self.test_model = kwargs.pop('test_model', './model/lstm/model-1')
+        self.max_len=kwargs.pop('max_len', 20)
 
         # set an optimizer by update rule
         if self.update_rule == 'adam':
@@ -63,20 +66,20 @@ class CaptioningSolver(object):
             os.makedirs(self.log_path)
 
 
-    def train(self):
-        # train/val dataset
+    def train(self,max_len):
+        # train/test dataset
         n_examples = self.data['captions'].shape[0]
         n_iters_per_epoch = int(np.ceil(float(n_examples)/self.batch_size))
         features = self.data['features']
         captions = self.data['captions']
         image_idxs = self.data['image_idxs']
-        val_features = self.val_data['features']
-        n_iters_val = int(np.ceil(float(val_features.shape[0])/self.batch_size))
+        test_features = self.test_data['features']
+        n_iters_test = int(np.ceil(float(test_features.shape[0])/self.batch_size))
 
         # build graphs for training model and sampling captions
         loss = self.model.build_model()
         tf.get_variable_scope().reuse_variables()
-        _, _, generated_captions = self.model.build_sampler(max_len=20)
+        _, _, generated_captions = self.model.build_sampler(max_len)
 
         # train op
         with tf.name_scope('optimizer'):
@@ -116,10 +119,10 @@ class CaptioningSolver(object):
             start_t = time.time()
 
             for e in range(self.n_epochs):
-                rand_idxs = np.random.permutation(n_examples)
+                rand_idxs = np.random.permutation(n_examples)#使训练集随机排序
                 captions = captions[rand_idxs]
                 image_idxs = image_idxs[rand_idxs]
-
+                #训练集训练
                 for i in range(n_iters_per_epoch):
                     captions_batch = captions[i*self.batch_size:(i+1)*self.batch_size]
                     image_idxs_batch = image_idxs[i*self.batch_size:(i+1)*self.batch_size]
@@ -149,11 +152,11 @@ class CaptioningSolver(object):
                 prev_loss = curr_loss
                 curr_loss = 0
                 
-                # print out BLEU scores and file write
-                if self.print_bleu:
-                    all_gen_cap = np.ndarray((val_features.shape[0], 20))
-                    for i in range(n_iters_val):
-                        features_batch = val_features[i*self.batch_size:(i+1)*self.batch_size]
+                #测试集测试
+                if self.test_or_not:
+                    all_gen_cap = np.ndarray((test_features.shape[0], 20))
+                    for i in range(n_iters_test):
+                        features_batch = test_features[i*self.batch_size:(i+1)*self.batch_size]
                         feed_dict = {self.model.features: features_batch}
                         gen_cap = sess.run(generated_captions, feed_dict=feed_dict)
                         #decoded = decode_captions(gen_caps, self.model.idx_to_word)
@@ -161,9 +164,10 @@ class CaptioningSolver(object):
                         all_gen_cap[i*self.batch_size:(i+1)*self.batch_size] = gen_cap
                     
                     all_decoded = decode_captions(all_gen_cap, self.model.idx_to_word)
-                    save_pickle(all_decoded, "./data/val/val.candidate.captions.pkl")
-                    scores = evaluate(data_path='./data', split='val', get_scores=True)
-                    write_bleu(scores=scores, path=self.model_path, epoch=e)
+                    #这个文件我们能通过文本方式打开吗，如果不能改为TXT存储
+                    save_pickle(all_decoded, "./data/test/test.candidate.captions.pkl")
+                    #scores = evaluate(data_path='./data', split='test', get_scores=True)
+                    #write_bleu(scores=scores, path=self.model_path, epoch=e)
 
                 # save model's parameters
                 if (e+1) % self.save_every == 0:
@@ -171,7 +175,7 @@ class CaptioningSolver(object):
                     print "model-%s saved." %(e+1)
             
          
-    def test(self, data, split='train', attention_visualization=True, save_sampled_captions=True):
+    def test(self, data, split='train', attention_visualization=True, save_sampled_captions=True,max_len):
         '''
         Args:
             - data: dictionary with the following keys:
@@ -188,7 +192,7 @@ class CaptioningSolver(object):
         features = data['features']
 
         # build a graph to sample captions
-        alphas, betas, sampled_captions = self.model.build_sampler(max_len=20)    # (N, max_len, L), (N, max_len)
+        alphas, betas, sampled_captions = self.model.build_sampler(max_len)    # (N, max_len, L), (N, max_len)
         
         config = tf.ConfigProto(allow_soft_placement=True)
         config.gpu_options.allow_growth = True
