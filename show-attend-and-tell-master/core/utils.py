@@ -1,16 +1,18 @@
+#coding=UTF-8
+
+from vocab_captions import _process_caption_data
+from vocab_captions import _build_vocab
+from vocab_captions import _build_caption_vector
+
 import numpy as np
-import cPickle as pickle
-import hickle
 import time
 import os
-
+import h5py
 
 def load_coco_data(data_path='./data', split='train'):
-
+    data_path = os.path.join(data_path, split)
     start_t = time.time()
     data = {}
-  
-  
   
     # 读入features
     f = h5py.File(data_path+'/vgg19_new.h5','r')
@@ -21,29 +23,32 @@ def load_coco_data(data_path='./data', split='train'):
         #image_idxs: Indices for mapping caption to image of shape（40000，） 设caption为40000个
         image_idxs = np.array(f['image_idxs'],dtype=np.float32)
         data['image_idxs'] = np.transpose(image_idxs)
+    f.close()
     
-    
-    #@汪洁在这里写入caption和'word_to_idx'，注意前面读文件已经用过f变量
-    #captions: Captions of shape (400000, 17) 是句长为17，建议包括起始符号，终止符号，无效部分用‘NULL’代替
-    #self._start = word_to_idx['<START>']
-    #self._null = word_to_idx['<NULL>']
-    #self._null = word_to_idx['<END>']
-    #但是我没有发现训练的时候哪里用到了END符号，这个汪洁你自己看看吧
+    # maximum length of caption(number of word). if caption is longer than max_length, deleted.  
+    max_length = 20
+    # if word occurs less than word_count_threshold in training dataset, the word index is special unknown token.
+    word_count_threshold = 1
     #word_to_idx: Mapping dictionary from word to index
-    if split == 'train':
-        data['captions'] = pickle.load(f)
-        with open(os.path.join(data_path, 'word_to_idx.pkl'), 'rb') as f:
-            data['word_to_idx'] = pickle.load(f)
 
+    train_captions = _process_caption_data(caption_file=data_path + '/train_wordslac.txt', 
+                                           max_length=20)
+    if split == 'train':
+        word_to_idx = _build_vocab(captions=train_captions, 
+                                   threshold=word_count_threshold)
+        data['word_to_idx'] = word_to_idx
+    
+    captions = _build_caption_vector(inputcaptions=train_captions, 
+                                     word_to_idx=word_to_idx, max_length=max_length)
+    data['captions'] = captions
 
     for k, v in data.items():
         if type(v) == np.ndarray:
-            print k, type(v), v.shape, v.dtype
+            print(k, type(v), v.shape, v.dtype)
         else:
-            print k, type(v), len(v)
+            print(k, type(v), len(v))
     end_t = time.time()
-    print "Elapse time: %.2f" %(end_t - start_t)
-    f.close()
+    print("Elapse time: %.2f" %(end_t - start_t))
     return data
 
 #@汪洁，在这里加入由序列转换为句子
