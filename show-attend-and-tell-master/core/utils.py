@@ -30,10 +30,22 @@ def load_coco_data(data_path='./data', split='train'):
     #self._null = word_to_idx['<END>']
     #但是我没有发现训练的时候哪里用到了END符号，这个汪洁你自己看看吧
     #word_to_idx: Mapping dictionary from word to index
+    f_captions = open(data_path + '/train_captions.txt','r')
+    train_captions = []
+    for line in f_captions:
+        train_captions.append(eval(line))
+
     if split == 'train':
-        data['captions'] = pickle.load(f)
-        with open(os.path.join(data_path, 'word_to_idx.pkl'), 'rb') as f:
-            data['word_to_idx'] = pickle.load(f)
+        data['captions'] = np.array(train_captions)
+
+
+    f_dictionary = open(data_path + '/train_dict.txt','r')
+    train_dict = []
+    for line in f_dictionary:
+        train_dict.append(eval(line))
+
+    if split == 'train':
+        data['word_to_idx'] = np.array(train_dict)
 
 
     for k, v in data.items():
