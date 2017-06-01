@@ -9,8 +9,8 @@ import time
 import os
 import h5py
 
-def load_coco_data(data_path='./data', split='train'):#数据文件放在./data文件夹下
-    #data_path = os.path.join(data_path, split)
+def load_coco_data(data_path='./data', split='train'):
+    data_path = os.path.join(data_path, split)
     start_t = time.time()
     data = {}
   
@@ -33,11 +33,10 @@ def load_coco_data(data_path='./data', split='train'):#数据文件放在./data�
 
     if split == 'train':
         train_captions = _process_caption_data(caption_file=data_path + '/train_wordslac.txt', 
-                                           max_length=20)
+                                               max_length=20)
         word_to_idx = _build_vocab(captions=train_captions, 
                                    threshold=word_count_threshold)
         data['word_to_idx'] = word_to_idx
-    
         captions = _build_caption_vector(inputcaptions=train_captions, 
                                      word_to_idx=word_to_idx, max_length=max_length)
         data['captions'] = captions
