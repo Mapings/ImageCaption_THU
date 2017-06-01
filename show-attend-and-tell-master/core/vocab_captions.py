@@ -42,7 +42,7 @@ def _build_vocab(captions, threshold=1):
 def _build_caption_vector(inputcaptions, word_to_idx, max_length):
     n_examples = len(inputcaptions)
     captions = np.ndarray((n_examples,max_length+2)).astype(np.int32)   
-
+    i = 0
     for caption in inputcaptions:
         words = caption.split(" ") 
         cap_vec = []
@@ -57,10 +57,8 @@ def _build_caption_vector(inputcaptions, word_to_idx, max_length):
             for j in range(max_length + 2 - len(cap_vec)):
                 cap_vec.append(word_to_idx['<NULL>']) 
         
-        captions = np.asarray(cap_vec)
+        captions[i] = np.asarray(cap_vec)
+        i +=1
+        
     print("Finished building caption vectors")
     return captions
-    
-
-
-
