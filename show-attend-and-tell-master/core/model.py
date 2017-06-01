@@ -16,8 +16,8 @@ import tensorflow as tf
 
 
 class CaptionGenerator(object):
-    def __init__(self, word_to_idx, dim_feature=[49, 512], dim_embed=512, dim_hidden=1024, n_time_step=16,
-                  prev2out=True, ctx2out=True, alpha_c=0.0, selector=True, dropout=True,max_len):
+    def __init__(self, word_to_idx, dim_feature=[49, 512], dim_embed=512, dim_hidden=1024, n_time_step=19,
+                  prev2out=True, ctx2out=True, alpha_c=0.0, selector=True, dropout=True):
         """
         Args:
             word_to_idx: word-to-index mapping dictionary.
@@ -46,7 +46,7 @@ class CaptionGenerator(object):
         self.H = dim_hidden# H is dimension of hidden state (default is 1024).
         self.T = n_time_step# T is the number of time step which is equal to caption's length-1 (16).
         #@汪洁，起始和终止设置是否合适
-        self.max_len=max_len
+        # self.max_len=max_len
         self._start = word_to_idx['<START>']
         self._null = word_to_idx['<NULL>']
 
@@ -69,6 +69,7 @@ class CaptionGenerator(object):
             w_c = tf.get_variable('w_c', [self.D, self.H], initializer=self.weight_initializer)
             b_c = tf.get_variable('b_c', [self.H], initializer=self.const_initializer)
             c = tf.nn.tanh(tf.matmul(features_mean, w_c) + b_c)
+            return c,h
 
     def _word_embedding(self, inputs, reuse=False):
         with tf.variable_scope('word_embedding', reuse=reuse):
@@ -101,7 +102,7 @@ class CaptionGenerator(object):
             w = tf.get_variable('w', [self.H, 1], initializer=self.weight_initializer)
             b = tf.get_variable('b', [1], initializer=self.const_initializer)
             beta = tf.nn.sigmoid(tf.matmul(h, w) + b, 'beta')    # (N, 1)
-            context = tf.mul(beta, context, name='selected_context') 
+            context = tf.multiply(beta, context, name='selected_context') 
             return context, beta
   
     def _decode_lstm(self, x, h, context, dropout=False, reuse=False):
@@ -156,7 +157,7 @@ class CaptionGenerator(object):
 
         loss = 0.0
         alpha_list = []
-        lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(num_units=self.H)
+        lstm_cell = tf.contrib.rnn.BasicLSTMCell(num_units=self.H)
 
         for t in range(self.T):
             context, alpha = self._attention_layer(features, features_proj, h, reuse=(t!=0))
@@ -166,20 +167,21 @@ class CaptionGenerator(object):
                 context, beta = self._selector(context, h, reuse=(t!=0)) 
 
             with tf.variable_scope('lstm', reuse=(t!=0)):
-                _, (c, h) = lstm_cell(inputs=tf.concat(1, [x[:,t,:], context]), state=[c, h])
+                _, (c, h) = lstm_cell(inputs=tf.concat([x[:,t,:], context], 1), state=[c, h])
 
             logits = self._decode_lstm(x[:,t,:], h, context, dropout=self.dropout, reuse=(t!=0))
-            loss += tf.reduce_sum(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, captions_out[:, t]) * mask[:, t])
+            loss += tf.reduce_sum(tf.nn.sparse_softmax_cross_entropy_with_logits(labels = captions_out[:, t], 
+                                                                                 logits=logits)* mask[:, t])
            
         if self.alpha_c > 0:
-            alphas = tf.transpose(tf.pack(alpha_list), (1, 0, 2))     # (N, T, L)
+            alphas = tf.transpose(tf.stack(alpha_list), (1, 0, 2))     # (N, T, L)
             alphas_all = tf.reduce_sum(alphas, 1)      # (N, L)
             alpha_reg = self.alpha_c * tf.reduce_sum((16./49 - alphas_all) ** 2)     
             loss += alpha_reg
 
         return loss / tf.to_float(batch_size)
 
-    def build_sampler(self, max_len):
+    def build_sampler(self, max_len=20):
         features = self.features
         
         # batch normalize feature vectors
@@ -191,7 +193,7 @@ class CaptionGenerator(object):
         sampled_word_list = []
         alpha_list = []
         beta_list = []
-        lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(num_units=self.H)
+        lstm_cell = tf.contrib.rnn.BasicLSTMCell(num_units=self.H, reuse=tf.get_variable_scope().reuse)
 
         for t in range(max_len):
             if t == 0:
@@ -207,13 +209,13 @@ class CaptionGenerator(object):
                 beta_list.append(beta)
 
             with tf.variable_scope('lstm', reuse=(t!=0)):
-                _, (c, h) = lstm_cell(inputs=tf.concat(1, [x, context]), state=[c, h])
+                _, (c, h) = lstm_cell(inputs=tf.concat([x, context], 1), state=[c, h])
 
             logits = self._decode_lstm(x, h, context, reuse=(t!=0))
             sampled_word = tf.argmax(logits, 1)       
             sampled_word_list.append(sampled_word)     
 
-        alphas = tf.transpose(tf.pack(alpha_list), (1, 0, 2))     # (N, T, L)
+        alphas = tf.transpose(tf.stack(alpha_list), (1, 0, 2))     # (N, T, L)
         betas = tf.transpose(tf.squeeze(beta_list), (1, 0))    # (N, T)
-        sampled_captions = tf.transpose(tf.pack(sampled_word_list), (1, 0))     # (N, max_len)
+        sampled_captions = tf.transpose(tf.stack(sampled_word_list), (1, 0))     # (N, max_len)
         return alphas, betas, sampled_captions
