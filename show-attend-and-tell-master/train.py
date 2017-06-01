@@ -13,13 +13,14 @@ def main():
     test_data = load_coco_data(data_path='./data', split='test')
 
     model = CaptionGenerator(word_to_idx, dim_feature=[49, 512], dim_embed=512,
-                                       dim_hidden=1024, n_time_step=22, prev2out=True, 
+                                       # dim_hidden=1024, n_time_step=22, prev2out=True,
+                                        dim_hidden=1024, n_time_step=21, prev2out=True,
                                                  ctx2out=True, alpha_c=1.0, selector=True, dropout=True)
 
     solver = CaptioningSolver(model, data, test_data, n_epochs=20, batch_size=20, update_rule='adam',
                                           learning_rate=0.001, print_every=1, save_every=1,
                                     pretrained_model=None, model_path='model/lstm/', test_model='model/lstm/model-10',
-                                     test_or_not=True, log_path='log/',max_len=20)
+                                     test_or_not=True, log_path='log/')
 
     solver.train()
 
