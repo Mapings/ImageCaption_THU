@@ -65,19 +65,20 @@ class CaptioningSolver(object):
 
 
     def train(self):
-        # train/test dataset
-        n_examples = self.data['captions'].shape[0]
-        n_iters_per_epoch = int(np.ceil(float(n_examples)/self.batch_size))
-        features = self.data['features']
-        captions = self.data['captions']
-        image_idxs = self.data['image_idxs']
-        test_features = self.test_data['features']
-        n_iters_test = int(np.ceil(float(test_features.shape[0])/self.batch_size))
+        with tf.variable_scope(tf.get_variable_scope()) as scope:
+            # train/test dataset
+            n_examples = self.data['captions'].shape[0]
+            n_iters_per_epoch = int(np.ceil(float(n_examples)/self.batch_size))
+            features = self.data['features']
+            captions = self.data['captions']
+            image_idxs = self.data['image_idxs']
+            test_features = self.test_data['features']
+            n_iters_test = int(np.ceil(float(test_features.shape[0])/self.batch_size))
 
-        # build graphs for training model and sampling captions
-        loss = self.model.build_model()
-        tf.get_variable_scope().reuse_variables()
-        _, _, generated_captions = self.model.build_sampler(max_len=20)
+            # build graphs for training model and sampling captions
+            loss = self.model.build_model()
+            tf.get_variable_scope().reuse_variables()
+            _, _, generated_captions = self.model.build_sampler(max_len=20)
 
         # train op
         with tf.name_scope('optimizer'):
@@ -87,13 +88,13 @@ class CaptioningSolver(object):
             train_op = optimizer.apply_gradients(grads_and_vars=grads_and_vars)
            
         # summary op   
-        tf.scalar_summary('batch_loss', loss)
+        tf.summary.scalar('batch_loss', loss)
         for var in tf.trainable_variables():
-            tf.histogram_summary(var.op.name, var)
+            tf.summary.histogram(var.op.name, var)
         for grad, var in grads_and_vars:
-            tf.histogram_summary(var.op.name+'/gradient', grad)
+            tf.summary.histogram(var.op.name+'/gradient', grad)
         
-        summary_op = tf.merge_all_summaries() 
+        summary_op = tf.summary.merge_all() 
 
         print("The number of epoch: %d" %self.n_epochs)
         print("Data size: %d" %n_examples)
@@ -104,8 +105,8 @@ class CaptioningSolver(object):
         #config.gpu_options.per_process_gpu_memory_fraction=0.9
         config.gpu_options.allow_growth = True
         with tf.Session(config=config) as sess:
-            tf.initialize_all_variables().run()
-            summary_writer = tf.train.SummaryWriter(self.log_path, graph=tf.get_default_graph())
+            tf.global_variables_initializer().run()
+            summary_writer = tf.summary.FileWriter(self.log_path, graph=tf.get_default_graph())
             saver = tf.train.Saver(max_to_keep=40)
 
             if self.pretrained_model is not None:
@@ -125,6 +126,9 @@ class CaptioningSolver(object):
                     captions_batch = captions[i*self.batch_size:(i+1)*self.batch_size]
                     image_idxs_batch = image_idxs[i*self.batch_size:(i+1)*self.batch_size]
                     features_batch = features[image_idxs_batch]
+                    #lzg adds.
+                    features_batch = features_batch.reshape((self.batch_size, features.shape[1], features.shape[2]))
+                    
                     feed_dict = {self.model.features: features_batch, self.model.captions: captions_batch}
                     _, l = sess.run([train_op, loss], feed_dict)
                     curr_loss += l
