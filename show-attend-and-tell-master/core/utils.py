@@ -9,8 +9,8 @@ import time
 import os
 import h5py
 
-def load_coco_data(data_path='./data', split='train'):
-    data_path = os.path.join(data_path, split)
+def load_coco_data(data_path='./data', split='train'):#数据文件放在./data文件夹下
+    #data_path = os.path.join(data_path, split)
     start_t = time.time()
     data = {}
   
