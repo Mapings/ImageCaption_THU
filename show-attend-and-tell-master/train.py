@@ -1,18 +1,20 @@
-from core.solver import CaptioningSolver
-from core.model import CaptionGenerator
-from core.utils import load_coco_data
+#coding=UTF-8
+
+from solver import CaptioningSolver
+from model import CaptionGenerator
+from utils import load_coco_data
 
 
 def main():
     # load train dataset
     data = load_coco_data(data_path='./data', split='train')
     word_to_idx = data['word_to_idx']
-    # load test dataset to print out bleu scores every epoch
+    # load val dataset to print out bleu scores every epoch
     test_data = load_coco_data(data_path='./data', split='test')
 
     model = CaptionGenerator(word_to_idx, dim_feature=[49, 512], dim_embed=512,
-                                       dim_hidden=1024, n_time_step=16, prev2out=True, 
-                                                 ctx2out=True, alpha_c=1.0, selector=True, dropout=True,max_len=20)
+                                       dim_hidden=1024, n_time_step=22, prev2out=True, 
+                                                 ctx2out=True, alpha_c=1.0, selector=True, dropout=True)
 
     solver = CaptioningSolver(model, data, test_data, n_epochs=20, batch_size=20, update_rule='adam',
                                           learning_rate=0.001, print_every=1, save_every=1,
