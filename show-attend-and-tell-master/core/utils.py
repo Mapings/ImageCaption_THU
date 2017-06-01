@@ -21,7 +21,7 @@ def load_coco_data(data_path='./data', split='train'):
     if split == 'train':
         data['file_names'] = np.arange(split_data.shape[0])+1
         #image_idxs: Indices for mapping caption to image of shape（40000，） 设caption为40000个
-        image_idxs = np.array(f['image_idxs'],dtype=np.float32)
+        image_idxs = np.array(f['image_idxs'],dtype=np.int32)
         data['image_idxs'] = np.transpose(image_idxs)
     f.close()
     
