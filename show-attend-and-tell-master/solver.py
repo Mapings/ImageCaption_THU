@@ -49,6 +49,7 @@ class CaptioningSolver(object):
         self.model_path = kwargs.pop('model_path', './model/')
         self.pretrained_model = kwargs.pop('pretrained_model', None)
         self.test_model = kwargs.pop('test_model', './model/lstm/model-1')
+        self.max_len=kwargs.pop('max_len', 20)
 
         # set an optimizer by update rule
         if self.update_rule == 'adam':
@@ -78,7 +79,7 @@ class CaptioningSolver(object):
             # build graphs for training model and sampling captions
             loss = self.model.build_model()
             tf.get_variable_scope().reuse_variables()
-            _, _, generated_captions = self.model.build_sampler(max_len=20)
+            _, _, generated_captions = self.model.build_sampler(self.max_len)
 
         # train op
         with tf.name_scope('optimizer'):
@@ -140,7 +141,9 @@ class CaptioningSolver(object):
 
                     if (i+1) % self.print_every == 0:
                         print("\nTrain loss at epoch %d & iteration %d (mini-batch): %.5f" %(e+1, i+1, l))
-                        ground_truths = captions[image_idxs == image_idxs_batch[0]]
+
+                        index=np.argwhere(image_idxs==image_idxs_batch[0])
+                        ground_truths = captions[index[:,0]]
                         decoded = decode_captions(ground_truths, self.model.idx_to_word)
                         for j, gt in enumerate(decoded):
                             print("Ground truth %d: %s" %(j+1, gt))
@@ -194,7 +197,7 @@ class CaptioningSolver(object):
         features = data['features']
 
         # build a graph to sample captions
-        alphas, betas, sampled_captions = self.model.build_sampler(max_len=20)    # (N, max_len, L), (N, max_len)
+        alphas, betas, sampled_captions = self.model.build_sampler(self.max_len)    # (N, max_len, L), (N, max_len)
         
         config = tf.ConfigProto(allow_soft_placement=True)
         config.gpu_options.allow_growth = True

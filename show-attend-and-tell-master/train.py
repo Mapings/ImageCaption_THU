@@ -17,10 +17,10 @@ def main():
                                         dim_hidden=1024, n_time_step=21, prev2out=True,
                                                  ctx2out=True, alpha_c=1.0, selector=True, dropout=True)
 
-    solver = CaptioningSolver(model, data, test_data, n_epochs=20, batch_size=20, update_rule='adam',
-                                          learning_rate=0.001, print_every=1, save_every=1,
+    solver = CaptioningSolver(model, data, test_data, n_epochs=20000000000, batch_size=8, update_rule='adam',
+                                          learning_rate=0.001, print_every=10, save_every=1,
                                     pretrained_model=None, model_path='model/lstm/', test_model='model/lstm/model-10',
-                                     test_or_not=True, log_path='log/')
+                                     test_or_not=True, log_path='log/',max_len=22)
 
     solver.train()
 

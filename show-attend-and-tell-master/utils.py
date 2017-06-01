@@ -18,11 +18,13 @@ def load_coco_data(data_path='./data', split='train'):
     f = h5py.File(data_path+'/vgg19_new.h5','r')
     split_data = np.array(f[split],dtype=np.float32)
     data['features']=np.transpose(split_data,(2,1,0))
+    #for i in data['features']:
+        #i = i.strip('\n')
     if split == 'train':
-        data['file_names'] = np.arange(split_data.shape[0])+1
+        data['file_names'] = np.arange(split_data.shape[0])
         #image_idxs: Indices for mapping caption to image of shape（40000，） 设caption为40000个
         image_idxs = np.array(f['image_idxs'],dtype=np.int32)
-        data['image_idxs'] = np.transpose(image_idxs)
+        data['image_idxs'] = np.transpose(image_idxs)-1
     f.close()
     
     # maximum length of caption(number of word). if caption is longer than max_length, deleted.  
@@ -32,7 +34,7 @@ def load_coco_data(data_path='./data', split='train'):
     #word_to_idx: Mapping dictionary from word to index
 
     if split == 'train':
-        train_captions = _process_caption_data(caption_file=data_path + '/train_wordslac.txt', 
+        train_captions = _process_caption_data(caption_file=data_path + '/train_valid_wordslac.txt',
                                                max_length=20)
         word_to_idx = _build_vocab(captions=train_captions, 
                                    threshold=word_count_threshold)
