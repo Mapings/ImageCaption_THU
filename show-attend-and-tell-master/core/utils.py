@@ -31,16 +31,16 @@ def load_coco_data(data_path='./data', split='train'):#数据文件放在./data�
     word_count_threshold = 1
     #word_to_idx: Mapping dictionary from word to index
 
-    train_captions = _process_caption_data(caption_file=data_path + '/train_wordslac.txt', 
-                                           max_length=20)
     if split == 'train':
+        train_captions = _process_caption_data(caption_file=data_path + '/train_wordslac.txt', 
+                                           max_length=20)
         word_to_idx = _build_vocab(captions=train_captions, 
                                    threshold=word_count_threshold)
         data['word_to_idx'] = word_to_idx
     
-    captions = _build_caption_vector(inputcaptions=train_captions, 
+        captions = _build_caption_vector(inputcaptions=train_captions, 
                                      word_to_idx=word_to_idx, max_length=max_length)
-    data['captions'] = captions
+        data['captions'] = captions
 
     for k, v in data.items():
         if type(v) == np.ndarray:
