@@ -4,11 +4,12 @@ from collections import Counter
 
 import numpy as np
 import os
+import codecs
 
 def _process_caption_data(caption_file, max_length):
     caption_word = list()
 
-    with open(caption_file) as f:
+    with codecs.open(caption_file,'r',encoding='utf-8') as f:
         for line in f:
             if len(line.replace(' ',''))<=max_length:
                 caption_word.append(line)
