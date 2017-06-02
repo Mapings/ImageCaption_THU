@@ -70,7 +70,7 @@ def decode_captions(captions, idx_to_word):
                 word = idx_to_word[captions[i, t]]
             #如果null与结束符号相同，这里应该做相应修改
             if word == '<END>':
-                words.append('.')
+                #words.append('.')
                 break
             if word != '<NULL>':
                 words.append(word)

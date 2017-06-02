@@ -7,6 +7,7 @@ import os
 import _pickle as pickle
 from scipy import ndimage
 from utils import *
+import codecs
 #from bleu import evaluate
 
 
@@ -42,11 +43,13 @@ class CaptioningSolver(object):
         self.batch_size = kwargs.pop('batch_size', 20)
         self.update_rule = kwargs.pop('update_rule', 'adam')
         self.learning_rate = kwargs.pop('learning_rate', 0.01)
-        self.test_or_not = kwargs.pop('test_or_not', False)
+        #self.test_or_not = kwargs.pop('test_or_not', False)
+        self.mode = kwargs.pop('mode', 'train')
         self.print_every = kwargs.pop('print_every', 100)
         self.save_every = kwargs.pop('save_every', 1)
         self.log_path = kwargs.pop('log_path', './log/')
         self.model_path = kwargs.pop('model_path', './model/')
+        self.result_path = kwargs.pop('result_path', './result/')
         self.pretrained_model = kwargs.pop('pretrained_model', None)
         self.test_model = kwargs.pop('test_model', './model/lstm/model-1')
         self.max_len=kwargs.pop('max_len', 20)
@@ -63,6 +66,8 @@ class CaptioningSolver(object):
             os.makedirs(self.model_path)
         if not os.path.exists(self.log_path):
             os.makedirs(self.log_path)
+        if not os.path.exists(self.result_path):
+            os.makedirs(self.result_path)
 
 
     def train(self):
@@ -113,71 +118,91 @@ class CaptioningSolver(object):
             if self.pretrained_model is not None:
                 print("Start training with pretrained Model..")
                 saver.restore(sess, self.pretrained_model)
-
-            prev_loss = -1
-            curr_loss = 0
-            start_t = time.time()
-
-            for e in range(self.n_epochs):
-                rand_idxs = np.random.permutation(n_examples)#使训练集随机排序
-                captions = captions[rand_idxs]
-                image_idxs = image_idxs[rand_idxs]
-                #训练集训练
-                for i in range(n_iters_per_epoch):
-                    captions_batch = captions[i*self.batch_size:(i+1)*self.batch_size]
-                    image_idxs_batch = image_idxs[i*self.batch_size:(i+1)*self.batch_size]
-                    features_batch = features[image_idxs_batch]
-                    #lzg adds.
-                    features_batch = features_batch.reshape((self.batch_size, features.shape[1], features.shape[2]))
-                    
-                    feed_dict = {self.model.features: features_batch, self.model.captions: captions_batch}
-                    _, l = sess.run([train_op, loss], feed_dict)
-                    curr_loss += l
-
-                    # write summary for tensorboard visualization
-                    if i % 10 == 0:
-                        summary = sess.run(summary_op, feed_dict)
-                        summary_writer.add_summary(summary, e*n_iters_per_epoch + i)
-
-                    if (i+1) % self.print_every == 0:
-                        print("\nTrain loss at epoch %d & iteration %d (mini-batch): %.5f" %(e+1, i+1, l))
-
-                        index=np.argwhere(image_idxs==image_idxs_batch[0])
-                        ground_truths = captions[index[:,0]]
-                        decoded = decode_captions(ground_truths, self.model.idx_to_word)
-                        for j, gt in enumerate(decoded):
-                            print("Ground truth %d: %s" %(j+1, gt))
-                        gen_caps = sess.run(generated_captions, feed_dict)
-                        decoded = decode_captions(gen_caps, self.model.idx_to_word)
-                        print("Generated caption: %s\n" %decoded[0])
-
-                print("Previous epoch loss: ", prev_loss)
-                print("Current epoch loss: ", curr_loss)
-                print("Elapsed time: ", time.time() - start_t)
-                prev_loss = curr_loss
-                curr_loss = 0
-                
                 #测试集测试
-                if self.test_or_not:
+                if self.mode=='test':
+                    print('begin to test')
                     all_gen_cap = np.ndarray((test_features.shape[0], 20))
-                    for i in range(n_iters_test):
-                        features_batch = test_features[i*self.batch_size:(i+1)*self.batch_size]
-                        feed_dict = {self.model.features: features_batch}
-                        gen_cap = sess.run(generated_captions, feed_dict=feed_dict)
-                        #decoded = decode_captions(gen_caps, self.model.idx_to_word)
-                        #print "Generated caption: %s\n" %decoded[0]
-                        all_gen_cap[i*self.batch_size:(i+1)*self.batch_size] = gen_cap
-                    
+                        for i in range(n_iters_test):
+                            features_batch = test_features[i*self.batch_size:(i+1)*self.batch_size]
+                            feed_dict = {self.model.features: features_batch}
+                            gen_cap = sess.run(generated_captions, feed_dict=feed_dict)
+                            #decoded = decode_captions(gen_caps, self.model.idx_to_word)
+                            #print "Generated caption: %s\n" %decoded[0]
+                            all_gen_cap[i*self.batch_size:(i+1)*self.batch_size] = gen_cap
+            
                     all_decoded = decode_captions(all_gen_cap, self.model.idx_to_word)
-                    #这个文件我们能通过文本方式打开吗，如果不能改为TXT存储
-                    save_pickle(all_decoded, "./data/test/test.candidate.captions.pkl")
-                    #scores = evaluate(data_path='./data', split='test', get_scores=True)
-                    #write_bleu(scores=scores, path=self.model_path, epoch=e)
+                    #测试结果TXT存储
+                    with codecs.open('result/submit.txt','w',encoding='utf-8') as file:
+                        all_decoded_str = '\n'.join(all_decoded)
+                        file.write(all_decoded_str)
+                    #save_pickle(all_decoded, "./data/test/test.candidate.captions.pkl")
+            
+            if self.mode=='train'
+                prev_loss = -1
+                curr_loss = 0
+                start_t = time.time()
+                print('begin to train')
 
-                # save model's parameters
-                if (e+1) % self.save_every == 0:
-                    saver.save(sess, os.path.join(self.model_path, 'model'), global_step=e+1)
-                    print("model-%s saved." %(e+1))
+                for e in range(self.n_epochs):
+                    rand_idxs = np.random.permutation(n_examples)#使训练集随机排序
+                    captions = captions[rand_idxs]
+                    image_idxs = image_idxs[rand_idxs]
+                    #训练集训练
+                    for i in range(n_iters_per_epoch):
+                        captions_batch = captions[i*self.batch_size:(i+1)*self.batch_size]
+                        image_idxs_batch = image_idxs[i*self.batch_size:(i+1)*self.batch_size]
+                        features_batch = features[image_idxs_batch]
+                        #lzg adds.
+                        features_batch = features_batch.reshape((self.batch_size, features.shape[1], features.shape[2]))
+                        
+                        feed_dict = {self.model.features: features_batch, self.model.captions: captions_batch}
+                        _, l = sess.run([train_op, loss], feed_dict)
+                        curr_loss += l
+
+                        # write summary for tensorboard visualization
+                        if i % 10 == 0:
+                            summary = sess.run(summary_op, feed_dict)
+                            summary_writer.add_summary(summary, e*n_iters_per_epoch + i)
+
+                        if (i+1) % self.print_every == 0:
+                            print("\nTrain loss at epoch %d & iteration %d (mini-batch): %.5f" %(e+1, i+1, l))
+
+                            index=np.argwhere(image_idxs==image_idxs_batch[0])
+                            ground_truths = captions[index[:,0]]
+                            decoded = decode_captions(ground_truths, self.model.idx_to_word)
+                            for j, gt in enumerate(decoded):
+                                print("Ground truth %d: %s" %(j+1, gt))
+                            gen_caps = sess.run(generated_captions, feed_dict)
+                            decoded = decode_captions(gen_caps, self.model.idx_to_word)
+                            print("Generated caption: %s\n" %decoded[0])
+
+                    print("Previous epoch loss: ", prev_loss)
+                    print("Current epoch loss: ", curr_loss)
+                    print("Elapsed time: ", time.time() - start_t)
+                    prev_loss = curr_loss
+                    curr_loss = 0
+                    """
+                    #测试集测试
+                    if self.test_or_not:
+                        all_gen_cap = np.ndarray((test_features.shape[0], 20))
+                        for i in range(n_iters_test):
+                            features_batch = test_features[i*self.batch_size:(i+1)*self.batch_size]
+                            feed_dict = {self.model.features: features_batch}
+                            gen_cap = sess.run(generated_captions, feed_dict=feed_dict)
+                            #decoded = decode_captions(gen_caps, self.model.idx_to_word)
+                            #print "Generated caption: %s\n" %decoded[0]
+                            all_gen_cap[i*self.batch_size:(i+1)*self.batch_size] = gen_cap
+                        
+                        all_decoded = decode_captions(all_gen_cap, self.model.idx_to_word)
+                        #这个文件我们能通过文本方式打开吗，如果不能改为TXT存储
+                        save_pickle(all_decoded, "./data/test/test.candidate.captions.pkl")
+                        #scores = evaluate(data_path='./data', split='test', get_scores=True)
+                        #write_bleu(scores=scores, path=self.model_path, epoch=e)
+                    """
+                    # save model's parameters
+                    if (e+1) % self.save_every == 0:
+                        saver.save(sess, os.path.join(self.model_path, 'model'), global_step=e+1)
+                        print("model-%s saved." %(e+1))
             
          
     def test(self, data, split='train', attention_visualization=True, save_sampled_captions=True):
