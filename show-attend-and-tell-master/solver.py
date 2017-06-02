@@ -132,9 +132,24 @@ class CaptioningSolver(object):
             
                     all_decoded = decode_captions(all_gen_cap, self.model.idx_to_word)
                     #测试结果TXT存储
-                    with codecs.open('result/submit.txt','w',encoding='utf-8') as file:
-                        all_decoded_str = '\n'.join(all_decoded)
-                        file.write(all_decoded_str)
+                    submit = []
+                    for image_idx in range(1000):                             
+                        picture_id = str(image_idx+9000)  
+                        sentence = [w for w in all_decoded[image_idx]]
+                        sentence = "".join(sentence)       
+                        sentence = str(list(sentence))  
+                        # print(sentence) 
+                        s = sentence[1:-1]
+                        s = s.replace("' ', ",'').replace(',','').replace("'",'')           
+                        caption = "%s %s" % (picture_id, s)   
+                        # print(caption)       
+                        submit.append(caption)
+                    # print(submit)
+                    open('./submit_attention.txt', 'w').write('%s' % '\n'.join(submit)) 
+                    
+#                     with codecs.open('result/submit.txt','w',encoding='utf-8') as file:
+#                         all_decoded_str = '\n'.join(all_decoded)
+#                         file.write(all_decoded_str)
                     #save_pickle(all_decoded, "./data/test/test.candidate.captions.pkl")
             
             if self.mode=='train'
