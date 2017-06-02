@@ -45,7 +45,7 @@ def _build_caption_vector(inputcaptions, word_to_idx, max_length):
     captions = np.ndarray((n_examples,max_length+2)).astype(np.int32)   
     i = 0
     for caption in inputcaptions:
-        words = caption.split(" ") 
+        words = caption.replace('\n','').split(" ") 
         cap_vec = []
         cap_vec.append(word_to_idx['<START>'])
         for word in words:
