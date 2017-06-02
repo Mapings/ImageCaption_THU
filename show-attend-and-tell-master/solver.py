@@ -162,24 +162,7 @@ class CaptioningSolver(object):
                 print("Elapsed time: ", time.time() - start_t)
                 prev_loss = curr_loss
                 curr_loss = 0
-                    """
-                    #测试集测试
-                    if self.test_or_not:
-                        all_gen_cap = np.ndarray((test_features.shape[0], 20))
-                        for i in range(n_iters_test):
-                            features_batch = test_features[i*self.batch_size:(i+1)*self.batch_size]
-                            feed_dict = {self.model.features: features_batch}
-                            gen_cap = sess.run(generated_captions, feed_dict=feed_dict)
-                            #decoded = decode_captions(gen_caps, self.model.idx_to_word)
-                            #print "Generated caption: %s\n" %decoded[0]
-                            all_gen_cap[i*self.batch_size:(i+1)*self.batch_size] = gen_cap
-                        
-                        all_decoded = decode_captions(all_gen_cap, self.model.idx_to_word)
-                        #这个文件我们能通过文本方式打开吗，如果不能改为TXT存储
-                        save_pickle(all_decoded, "./data/test/test.candidate.captions.pkl")
-                        #scores = evaluate(data_path='./data', split='test', get_scores=True)
-                        #write_bleu(scores=scores, path=self.model_path, epoch=e)
-                    """
+
                 # save model's parameters
                 if (e+1) % self.save_every == 0:
                     saver.save(sess, os.path.join(self.model_path, 'model'), global_step=e+1)

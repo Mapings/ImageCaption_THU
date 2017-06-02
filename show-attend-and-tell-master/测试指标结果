@@ -1,0 +1,3 @@
+Founder	checkpoint	bleu-1	bleu-2	bleu-3	bleu-4	rouge	cider	time	learning-rate	
+lzg	epoch-19	0.653	0.509	0.392	0.301	0.485	1.042	3h	0.001	
+
