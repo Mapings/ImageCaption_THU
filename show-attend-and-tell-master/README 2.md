@@ -18,10 +18,10 @@ a)没有之前训练的参数
           
 b)有之前训练的参数
 
-在train.py文件中，令函数CaptioningSolver的参数pretrained_model=True,mode='train'
+在train.py文件中，令函数CaptioningSolver的参数pretrained_model='model/~~.cpkt',mode='train'
 
-2.测试模式：在train.py文件中，令函数CaptioningSolver的参数pretrained_model=True,mode='test'
+2.测试模式：在train.py文件中，令函数CaptioningSolver的参数pretrained_model='model/~~.cpkt',mode='test'
   
-3.pretrained_model文件置于model_path='model/lstm/'中（训练生成的model也在相同位置）
+3.将pretrained_model文件置于model_path='model/'中（训练生成的model也在相同位置）
 
 4.生成的测试文件在result_path='result/'中
