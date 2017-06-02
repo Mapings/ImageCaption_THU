@@ -26,22 +26,26 @@ c）运行train.py
 
 在train.py文件中，
 
-a）函数CaptioningSolver的参数pretrained_model='model/model-10',其中model-10为模型参数文件
+a）将pretrained_model模型参数文件置于model_path='model/'中
 
-b）激活solver.train()；注释掉solver.test()；
+b) 函数CaptioningSolver的参数pretrained_model='model/model-10',其中model-10为a)中放置的模型参数文件名
 
-c）运行train.py
+c）激活solver.train()；注释掉solver.test()；
+
+d）运行train.py
 
 #2.测试模式：
 
 在train.py文件中
 
-a）函数CaptioningSolver的参数test_model='model/model-10',其中model-10为模型参数文件
+a）将test_model模型参数文件置于model_path='model/'中
 
-b）激活solver.test()；注释掉solver.train()；
+b) 函数CaptioningSolver的参数test_model='model/model-10',其中model-10为a)中放置的模型参数文件名
 
-c）运行train.py
+c）激活solver.test()；注释掉solver.train()；
+
+d）运行train.py
   
-#3.将pretrained_model,test_model等模型参数文件置于model_path='model/'中（训练生成的model也在相同位置）
+#3.训练生成的model也位于model_path='model/'
 
-#4.生成的测试文件在result_path='result/'中
+#4.生成的测试文件位于result_path='result/'
