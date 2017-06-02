@@ -11,10 +11,13 @@ data需要的captions， word_to_idx 也已经生成，在./data文件夹下。�
 #-------------------------------------- 20170602: 请添加修改 -----------------------------------------------#	
 
 1.训练模式：
+
 a)没有之前训练的参数
+
 在train.py文件中，令函数CaptioningSolver的参数pretrained_model=None,mode='train'
           
 b)有之前训练的参数
+
 在train.py文件中，令函数CaptioningSolver的参数pretrained_model=True,mode='train'
 
 2.测试模式：在train.py文件中，令函数CaptioningSolver的参数pretrained_model=True,mode='test'
