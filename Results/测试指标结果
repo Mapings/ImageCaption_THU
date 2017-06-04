@@ -16,25 +16,46 @@ lzg	im2txt	model.ckpt-799999	0.667	0.534	0.425	0.336	0.501	1.117	k = 4	1	改了9
 ds	im2txt	model.ckpt-2499999	0.623	0.477	0.365	0.279	0.473	0.99	k = 4	2	应该是过学习了。。。。
 lzg	im2txt	model.ckpt-899999	0.669	0.536	0.427	0.338	0.503	1.125	k = 4	1	将有指示牌的句子用“字caption”的结果替代，只提高了一点evalue结果
 lzg	im2txt	model.ckpt-899999	0.67	0.537	0.428	0.339	0.504	1.13	k = 4	1	
-lzg	attention	epoch_19	0.641	0.497	0.381	0.289	0.481	1.015			
-lzg	attention	epoch_20	0.656	0.518	0.402	0.312	0.494	1.068			
-lzg	attention	epoch_21	0.639	0.496	0.383	0.295	0.485	1.037			
-lzg	attention	epoch_25	0.639	0.498	0.383	0.293	0.482	1.023			
-lzg	attention	epoch_28	0.647	0.502	0.384	0.292	0.484	1.031			
-lzg	attention	epoch_29	0.644	0.5	0.382	0.288	0.482	1.025			
-lzg	attention	epoch_30	0.651	0.509	0.393	0.302	0.488	1.034			
-lzg	attention	epoch_31	0.648	0.506	0.388	0.297	0.486	1.049			
-lzg	attention	epoch_33	0.645	0.5	0.383	0.291	0.48	1.012			
-lzg	attention	epoch_36	0.643	0.5	0.384	0.294	0.488	1.029			
-lzg	attention	epoch_37	0.648	0.507	0.396	0.307	0.49	1.082			
-lzg	attention	epoch_40	0.638	0.494	0.378	0.287	0.479	1.013			
-lzg	attention	epoch_42	0.643	0.5	0.386	0.296	0.484	1.038			
-lzg	attention	epoch_50	0.641	0.499	0.382	0.289	0.486	1.016			
-lzg	attention	epoch_59	0.635	0.49	0.373	0.284	0.478	0.998			
-lzg	attention	epoch_60	0.647	0.505	0.388	0.298	0.488	1.026			
-lzg	attention	epoch_61	0.64	0.497	0.379	0.288	0.485	1.008			
-lzg	attention	epoch_67	0.644	0.502	0.388	0.297	0.486	1.02			
-lzg	attention	epoch_105	0.636	0.494	0.379	0.289	0.482	1.002			
-lzg	attention	epoch_110	0.633	0.489	0.373	0.283	0.479	0.998			
-lzg	attention	epoch_130	0.639	0.494	0.377	0.289	0.486	1.013			
+lzg	attention	epoch_19	0.641	0.497	0.381	0.289	0.481	1.015			learning rate = 0.001
+lzg	attention	epoch_20	0.656	0.518	0.402	0.312	0.494	1.068			learning rate = 0.001
+lzg	attention	epoch_21	0.639	0.496	0.383	0.295	0.485	1.037			learning rate = 0.001
+lzg	attention	epoch_25	0.639	0.498	0.383	0.293	0.482	1.023			learning rate = 0.001
+lzg	attention	epoch_28	0.647	0.502	0.384	0.292	0.484	1.031			learning rate = 0.001
+lzg	attention	epoch_29	0.644	0.5	0.382	0.288	0.482	1.025			learning rate = 0.001
+lzg	attention	epoch_30	0.651	0.509	0.393	0.302	0.488	1.034			learning rate = 0.001
+lzg	attention	epoch_31	0.648	0.506	0.388	0.297	0.486	1.049			learning rate = 0.001
+lzg	attention	epoch_33	0.645	0.5	0.383	0.291	0.48	1.012			learning rate = 0.001
+lzg	attention	epoch_36	0.643	0.5	0.384	0.294	0.488	1.029			learning rate = 0.001
+lzg	attention	epoch_37	0.648	0.507	0.396	0.307	0.49	1.082			learning rate = 0.001
+lzg	attention	epoch_40	0.638	0.494	0.378	0.287	0.479	1.013			learning rate = 0.001
+lzg	attention	epoch_42	0.643	0.5	0.386	0.296	0.484	1.038			learning rate = 0.001
+lzg	attention	epoch_50	0.641	0.499	0.382	0.289	0.486	1.016			learning rate = 0.001
+lzg	attention	epoch_59	0.635	0.49	0.373	0.284	0.478	0.998			learning rate = 0.001
+lzg	attention	epoch_60	0.647	0.505	0.388	0.298	0.488	1.026			learning rate = 0.001
+lzg	attention	epoch_61	0.64	0.497	0.379	0.288	0.485	1.008			learning rate = 0.001
+lzg	attention	epoch_67	0.644	0.502	0.388	0.297	0.486	1.02			learning rate = 0.001
+lzg	attention	epoch_105	0.636	0.494	0.379	0.289	0.482	1.002			learning rate = 0.001
+lzg	attention	epoch_110	0.633	0.489	0.373	0.283	0.479	0.998			learning rate = 0.001
+lzg	attention	epoch_130	0.639	0.494	0.377	0.289	0.486	1.013			learning rate = 0.001
 epoch 20的时候已经取得当前参数（learning rate=0.001)下的最好值, 训练时间 2h左右；当前的最好值不如im2txt的最优值，但是优势是训练时间短。观察生成的句子的特点，可以发现，句子对画面的场景信息捕捉灵敏，几乎没有出错，但是对画面的具体内容（细节）认识不足，无法准确的描述场景中所发生的事件。比如，是人（甚至是男人-女人）还是动物，是沙滩还是草原还是街道，这些信息判断准确，但是对人在看电视还是看电脑，动物在吐舌头还是叼飞盘判断不准确。											
+lzg	attention	epoch_19	0.663	0.523	0.409	0.318	0.502	1.106			learning rate = 0.0002
+lzg	attention	epoch_20	0.668	0.526	0.409	0.316	0.501	1.102			learning rate = 0.0002
+lzg	attention	epoch_21	0.668	0.525	0.408	0.318	0.504	1.117			learning rate = 0.0002
+lzg	attention	epoch_22	0.669	0.526	0.408	0.316	0.5	1.099			learning rate = 0.0002
+lzg	attention	epoch_23	0.66	0.519	0.404	0.313	0.498	1.084			learning rate = 0.0002
+lzg	attention	epoch_24	0.664	0.52	0.402	0.31	0.496	1.079			learning rate = 0.0002
+lzg	attention	epoch_25	0.667	0.522	0.404	0.312	0.495	1.103			learning rate = 0.0002
+lzg	attention	epoch_26	0.659	0.516	0.4	0.309	0.494	1.09			learning rate = 0.0002
+lzg	attention	epoch_27	0.657	0.515	0.399	0.306	0.492	1.086			learning rate = 0.0002
+lzg	attention	epoch_28	0.651	0.508	0.391	0.296	0.49	1.059			learning rate = 0.0002
+lzg	attention	epoch_29	0.661	0.516	0.398	0.306	0.492	1.051			learning rate = 0.0002
+lzg	attention	epoch_30	0.66	0.516	0.399	0.307	0.493	1.085			learning rate = 0.0002
+lzg	attention	epoch_31	0.664	0.521	0.403	0.311	0.494	1.091			learning rate = 0.0002
+lzg	attention	epoch_32	0.655	0.513	0.397	0.309	0.493	1.082			learning rate = 0.0002
+lzg	attention	epoch_33	0.65	0.508	0.391	0.3	0.488	1.047			learning rate = 0.0002
+lzg	attention	epoch_35	0.651	0.505	0.388	0.298	0.491	1.049			learning rate = 0.0002
+lzg	attention	epoch_38	0.657	0.514	0.398	0.307	0.498	1.082			learning rate = 0.0002
+lzg	attention	epoch_39	0.651	0.505	0.389	0.299	0.492	1.057			learning rate = 0.0002
+lzg	attention	epoch_40	0.657	0.51	0.392	0.298	0.493	1.06			learning rate = 0.0002
+lzg	attention	epoch_42	0.651	0.502	0.383	0.291	0.49	1.037			learning rate = 0.0002
+lzg	attention	epoch_50	0.65	0.505	0.389	0.298	0.488	1.032			learning rate = 0.0002
