@@ -19,6 +19,7 @@ def main():
     solver = CaptioningSolver(model, data, test_data, n_epochs=20000000000, batch_size=8, update_rule='adam',
                                           learning_rate=0.001, print_every=10, save_every=1,
                               pretrained_model=None,#pretrained_model='model/model-10'
+                              test_while_train=False,
                               model_path='model/', test_model='model/model-10',
                            log_path='log/',max_len=22,result_path='result/')
     #训练用

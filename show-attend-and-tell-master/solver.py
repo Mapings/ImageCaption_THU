@@ -45,6 +45,7 @@ class CaptioningSolver(object):
         self.learning_rate = kwargs.pop('learning_rate', 0.01)
         self.print_every = kwargs.pop('print_every', 100)
         self.save_every = kwargs.pop('save_every', 1)
+        self.test_while_train = kwargs.pop('test_while_train', False)
         self.log_path = kwargs.pop('log_path', './log/')
         self.model_path = kwargs.pop('model_path', './model/')
         self.result_path = kwargs.pop('result_path', './result/')
@@ -156,7 +157,34 @@ class CaptioningSolver(object):
                         gen_caps = sess.run(generated_captions, feed_dict)
                         decoded = decode_captions(gen_caps, self.model.idx_to_word)
                         print("Generated caption: %s\n" %decoded[0])
+                #测试集测试
+                if self.test_while_train:
+                    all_gen_cap = np.ndarray((test_features.shape[0], self.max_len))
+                    for i in range(n_iters_test):
+                        features_batch = test_features[i*self.batch_size:(i+1)*self.batch_size]
+                        feed_dict = {self.model.features: features_batch}
+                        gen_cap = sess.run(generated_captions, feed_dict=feed_dict)
+                        #decoded = decode_captions(gen_caps, self.model.idx_to_word)
+                        #print "Generated caption: %s\n" %decoded[0]
+                        all_gen_cap[i*self.batch_size:(i+1)*self.batch_size] = gen_cap
                 
+                    all_decoded = decode_captions(all_gen_cap, self.model.idx_to_word)
+                    # print(all_decoded)
+                    submit = []
+                    for image_idx in range(1000):
+                        picture_id = str(image_idx+9000)
+                        sentence = [w for w in all_decoded[image_idx]]
+                        sentence = "".join(sentence)
+                        sentence = str(list(sentence))
+                        # print(sentence)
+                        s = sentence[1:-1]
+                        s = s.replace("' ', ",'').replace(',','').replace("'",'')
+                        caption = "%s %s" % (picture_id, s)
+                        # print(caption)
+                        submit.append(caption)
+                    # print(submit)
+                    open('./submit_attention'+str(e)+'.txt', 'w').write('%s' % '\n'.join(submit))
+                    
 
                 print("Previous epoch loss: ", prev_loss)
                 print("Current epoch loss: ", curr_loss)
@@ -194,7 +222,8 @@ class CaptioningSolver(object):
         with tf.Session(config=config) as sess:
             saver = tf.train.Saver()
             saver.restore(sess, self.test_model)
-            features_batch, image_files = sample_coco_minibatch(data, self.batch_size)
+            #features_batch, image_files = sample_coco_minibatch(data, self.batch_size)
+            features_batch = sample_coco_minibatch(data, self.batch_size)
             feed_dict = { self.model.features: features_batch }
             alps, bts, sam_cap = sess.run([alphas, betas, sampled_captions], feed_dict)  # (N, max_len, L), (N, max_len)
             decoded = decode_captions(sam_cap, self.model.idx_to_word)
@@ -224,7 +253,7 @@ class CaptioningSolver(object):
                     plt.show()
 
             if save_sampled_captions:
-                all_sam_cap = np.ndarray((features.shape[0], 20))
+                all_sam_cap = np.ndarray((features.shape[0], 22))
                 num_iter = int(np.ceil(float(features.shape[0]) / self.batch_size))
                 for i in range(num_iter):
                     features_batch = features[i*self.batch_size:(i+1)*self.batch_size]
@@ -241,7 +270,7 @@ class CaptioningSolver(object):
                     s = sentence[1:-1]
                     s = s.replace("' ', ",'').replace(',','').replace("'",'')
                     caption = "%s %s" % (picture_id, s)
-                    # print(caption)
+                    print(caption)
                     submit.append(caption)
                 open('./submit_attention.txt', 'w').write('%s' % '\n'.join(submit))
                 #open('./submit_attention'+str(e)+'.txt', 'w').write('%s' % '\n'.join(submit))
