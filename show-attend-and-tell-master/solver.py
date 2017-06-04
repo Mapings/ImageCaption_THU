@@ -156,6 +156,7 @@ class CaptioningSolver(object):
                         gen_caps = sess.run(generated_captions, feed_dict)
                         decoded = decode_captions(gen_caps, self.model.idx_to_word)
                         print("Generated caption: %s\n" %decoded[0])
+                
 
                 print("Previous epoch loss: ", prev_loss)
                 print("Current epoch loss: ", curr_loss)
@@ -243,4 +244,5 @@ class CaptioningSolver(object):
                     # print(caption)
                     submit.append(caption)
                 open('./submit_attention.txt', 'w').write('%s' % '\n'.join(submit))
+                #open('./submit_attention'+str(e)+'.txt', 'w').write('%s' % '\n'.join(submit))
                 #save_pickle(all_decoded, "./data/%s/%s.candidate.captions.pkl" %(split,split))

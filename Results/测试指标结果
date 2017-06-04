@@ -15,7 +15,13 @@ lzg	im2txt	model.ckpt-899999	0.666	0.53	0.415	0.325	0.503	1.064	k = 2	1
 lzg	im2txt	model.ckpt-799999	0.667	0.534	0.425	0.336	0.501	1.117	k = 4	1	改了9003,9004俩句子，就有了一点提高，蛋疼
 ds	im2txt	model.ckpt-2499999	0.623	0.477	0.365	0.279	0.473	0.99	k = 4	2	应该是过学习了。。。。
 lzg	im2txt	model.ckpt-899999	0.669	0.536	0.427	0.338	0.503	1.125	k = 4	1	将有指示牌的句子用“字caption”的结果替代，只提高了一点evalue结果
-lzg	im2txt	model.ckpt-899999	0.67	0.537	0.428	0.339	0.504	1.13	k = 4	1	
+lzg	im2txt	model.ckpt-899999	0.67	0.537	0.428	0.339	0.504	1.13	k = 4	1
+ds	im2txt	model.ckpt-929999	0.635	0.489	0.374	0.287	0.482	0.986	k = 4	2	分词	指示牌均用*替代，提高0.005	
+ds	im2txt	model.ckpt-969999	0.636	0.491	0.377	0.292	0.481	1.001	k = 4	2	分词
+	
+
+
+	
 lzg	attention	epoch_19	0.641	0.497	0.381	0.289	0.481	1.015			learning rate = 0.001
 lzg	attention	epoch_20	0.656	0.518	0.402	0.312	0.494	1.068			learning rate = 0.001
 lzg	attention	epoch_21	0.639	0.496	0.383	0.295	0.485	1.037			learning rate = 0.001
