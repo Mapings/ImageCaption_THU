@@ -155,7 +155,7 @@ def main(unused_argv):
 
     # Run the Op to initialize the variables.
     sess.run(init_op)
-    # saver.restore(sess, "my_model/model.ckpt-519999")
+    # saver.restore(sess, "my_model/model-word-9000-fc1.ckpt-399999")
 
     #feed_dict = {image_embeddings_initializer: data_sets.image_embeddings}
     #print(feed_dict)
@@ -192,14 +192,14 @@ def main(unused_argv):
           step += 1
 
       # Save a checkpoint periodically.
-        if (step + 1) % 10000 == 0:
+        if (step + 1) % 100000 == 0:
           print('Saving')
-          saver.save(sess, os.path.join(os.getcwd(), 'my_model/model.ckpt'), global_step=step)
+          saver.save(sess, os.path.join(os.getcwd(), 'my_model/model-word-9000-fc1-cut.ckpt'), global_step=step)
 
           step += 1
     except tf.errors.OutOfRangeError:
       print('Saving')
-      saver.save(sess, os.path.join(os.getcwd(), 'my_model/model.ckpt'), global_step=step)
+      saver.save(sess, os.path.join(os.getcwd(), 'my_model/model-word-9000-fc1-cut.ckpt'), global_step=step)
       print('Done training for %d epochs, %d steps.' % (FLAGS.num_epochs, step))
     finally:
     # When done, ask the threads to stop.

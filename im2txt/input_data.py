@@ -33,7 +33,7 @@ class read_data_sets(object):
   def read_image_embeddings(self, data_dir):
  
     # 将训练数据作为不变变量读入
-    f = h5py.File(data_dir+'/fc1_new.h5','r')
+    f = h5py.File(data_dir+'/fc1_9000_new.h5','r')
     training_data = np.array(f['train_set'],dtype=np.float32)
     training_data = training_data.transpose()
     self.image_embeddings = training_data

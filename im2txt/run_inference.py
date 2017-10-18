@@ -39,7 +39,7 @@ import codecs
 
 FLAGS = tf.flags.FLAGS
 
-tf.flags.DEFINE_string("checkpoint_path", "all_model/submit_zi_fc1_969999/model.ckpt-969999",
+tf.flags.DEFINE_string("checkpoint_path", "my_model/model-word-9000-fc1-cut.ckpt-199999",
                        "Model checkpoint file or directory containing a "
                        "model checkpoint file.")
 tf.flags.DEFINE_string("vocab_file", "data/wordlac_count_all.txt", "Text file containing the vocabulary.")
@@ -121,7 +121,7 @@ def main(_):
         select_first.append(caption)
       submit.append(select_first[0])
       print(select_first[0])
-    with codecs.open('Results/submit_zi_fc1_969999.txt', 'w', encoding='utf-8') as file:
+    with codecs.open('Results/word-9000-fc1-cut-big-batch-199999-beam-4.txt', 'w', encoding='utf-8') as file:
       submit_str = '\n'.join(submit)
       file.write(submit_str)
 
